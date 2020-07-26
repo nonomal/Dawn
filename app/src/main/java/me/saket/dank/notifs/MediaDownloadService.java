@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.media.MediaMetadata;
 import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Build;
@@ -353,6 +354,22 @@ public class MediaDownloadService extends Service {
     NotificationManagerCompat.from(this).notify(notificationId, errorNotification);
   }
 
+  private void displaySummaryNotification(NotificationManagerCompat nm, String channel) {
+    // No point in grouping download notifications on < Nougat since summary notification won't be exapndable
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      Notification summaryNotification = new NotificationCompat.Builder(MediaDownloadService.this, channel)
+          .setSmallIcon(R.drawable.ic_done_24dp)
+          .setGroup(NotificationConstants.MEDIA_DOWNLOAD_SUCCESS_GROUP)
+          .setGroupSummary(true)
+          .setShowWhen(true)
+          .setDefaults(Notification.DEFAULT_ALL)
+          .setOnlyAlertOnce(true)
+          .setAutoCancel(true)
+          .build();
+      nm.notify(NotificationConstants.ID_MEDIA_DOWNLOAD_SUCCESS_BUNDLE_SUMMARY, summaryNotification);
+    }
+  }
+
   /**
    * Generate a notification with a preview of the media. Images and videos both work, thanks to Glide.
    */
@@ -407,7 +424,7 @@ public class MediaDownloadService extends Service {
                 .setSmallIcon(R.drawable.ic_done_24dp)
                 .setOngoing(false)
                 .setLocalOnly(true)
-                .setGroup(NotificationConstants.MEDIA_DOWNLOAD_GROUP)
+                .setGroup(NotificationConstants.MEDIA_DOWNLOAD_SUCCESS_GROUP)
                 .setWhen(completedDownloadJob.timestamp())
                 .setContentIntent(viewImagePendingIntent)
                 .addAction(shareImageAction)
@@ -418,9 +435,13 @@ public class MediaDownloadService extends Service {
 
             // Taking advantage of O's tinted media notifications! I feel bad for this.
             // Let's see if anyone from Google asks me to remove this.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // ---
+            // Android 11 finally broke this so we'll force it to use BigPicture style for now
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && Build.VERSION.SDK_INT < 30) {
               MediaSession poop = new MediaSession(getBaseContext(), "me.saket.Dank.dummyMediaSession");
               MediaSessionCompat.Token dummyTokenCompat = MediaSessionCompat.Token.fromToken(poop.getSessionToken());
+              MediaMetadata meta = new MediaMetadata.Builder().putLong(MediaMetadata.METADATA_KEY_DURATION, -1).build();
+              poop.setMetadata(meta);
               poop.release();
 
               notificationBuilder = notificationBuilder
@@ -443,7 +464,9 @@ public class MediaDownloadService extends Service {
             }
 
             Notification successNotification = notificationBuilder.build();
-            NotificationManagerCompat.from(MediaDownloadService.this).notify(notificationId, successNotification);
+            NotificationManagerCompat nm = NotificationManagerCompat.from(MediaDownloadService.this);
+            displaySummaryNotification(nm, notificationChannelId);
+            nm.notify(notificationId, successNotification);
           }
         });
   }
