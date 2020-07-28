@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.media.MediaMetadata;
+import android.media.MediaScannerConnection;
 import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Build;
@@ -616,12 +618,34 @@ public class MediaDownloadService extends Service {
         String mediaFileName = Urls.parseFileNameWithExtension(downloadedMediaLink.highQualityUrl());
         //noinspection LambdaParameterTypeCanBeSpecified,ConstantConditions
         File userAccessibleFile = Files2.INSTANCE.copyFileToPicturesDirectory(getResources(), downloadJobUpdate.downloadedFile(), mediaFileName);
+        String userFilePath = userAccessibleFile.getAbsolutePath();
 
-        //broadcast file
+        ContentResolver resolver = getContentResolver();
+
+        Uri contentUri = downloadedMediaLink.isVideo() ?
+            MediaStore.Video.Media.EXTERNAL_CONTENT_URI :
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+
         ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE, mediaFileName);
-        values.put(MediaStore.Images.Media.DISPLAY_NAME, mediaFileName);
-        getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values);
+        values.put(MediaStore.MediaColumns.DATE_MODIFIED, System.currentTimeMillis() / 1000);
+
+        // try to update mtime on already indexed file
+        int updatedCount = resolver.update(contentUri, values,
+            MediaStore.MediaColumns.DATA + "=?",
+            new String[]{ userFilePath });
+
+        if (updatedCount <= 0) {
+          // broadcast new file
+          values.put(MediaStore.MediaColumns.DATA, userFilePath);
+          values.put(MediaStore.MediaColumns.TITLE, mediaFileName);
+          values.put(MediaStore.MediaColumns.DISPLAY_NAME, mediaFileName);
+          resolver.insert(contentUri, values);
+        }
+
+        MediaScannerConnection.scanFile(
+            MediaDownloadService.this,
+            new String[]{ userFilePath },
+            null, null);
 
         return MediaDownloadJob.downloaded(downloadedMediaLink, userAccessibleFile, downloadJobUpdate.timestamp());
 
