@@ -397,33 +397,43 @@ public class SubredditUiConstructor {
   }
 
   private SubredditSubmission.UiModel.Thumbnail.Builder thumbnailForStaticImage(Context c) {
-    //noinspection ConstantConditions
     return SubredditSubmission.UiModel.Thumbnail.builder()
         .remoteUrl(Optional.empty())
         .scaleType(ImageView.ScaleType.CENTER_INSIDE)
         .tintColor(Optional.of(ContextCompat.getColor(c, R.color.gray_100)))
-        .backgroundRes(Optional.of(R.drawable.background_submission_self_thumbnail));
+        .backgroundRes(Optional.of(R.drawable.background_submission_self_thumbnail))
+        .height(Optional.empty());
   }
 
   private SubredditSubmission.UiModel.Thumbnail thumbnailForRemoteImage(Context c, SubmissionPreview preview) {
     ImageWithMultipleVariants redditThumbnails = ImageWithMultipleVariants.Companion.of(preview);
     int preferredWidth = getPreferredWidthForThumbnail(c);
-    String optimizedThumbnailUrl = redditThumbnails.findNearestFor(preferredWidth);
+    Optional<SubmissionPreview.Variation> optimizedThumbnail = Optional.ofNullable(redditThumbnails.findNearestFor(preferredWidth, -1));
+    Optional<String> optimizedThumbnailUrl = optimizedThumbnail.map(thumbnail -> Html.fromHtml(thumbnail.getUrl()).toString());
+    Optional<Integer> thumbnailFullHeight = optimizedThumbnail.map(thumbnail -> getFullHeightForThumbnail(preferredWidth, thumbnail));
 
     return SubredditSubmission.UiModel.Thumbnail.builder()
         .staticRes(Optional.empty())
-        .remoteUrl(Optional.of(optimizedThumbnailUrl))
+        .remoteUrl(optimizedThumbnailUrl)
         .contentDescription(c.getString(R.string.subreddit_submission_item_cd_external_url))
         .scaleType(ImageView.ScaleType.CENTER_CROP)
         .tintColor(Optional.empty())
         .backgroundRes(Optional.empty())
+        .height(thumbnailFullHeight)
         .build();
   }
 
+  private int getFullHeightForThumbnail(int preferredWidth, SubmissionPreview.Variation optimizedThumbnail) {
+    int widthDifference = preferredWidth - optimizedThumbnail.getWidth();
+    float aspectRatio = optimizedThumbnail.getWidth() / ((float) optimizedThumbnail.getHeight());
+    int heightDifference = aspectRatio != 0 ? Math.round(widthDifference / aspectRatio) : 0;
+    return optimizedThumbnail.getHeight() + heightDifference;
+  }
+
   private int getPreferredWidthForThumbnail(Context c) {
-    if (subredditSubmissionImageStyle.get().equals(SubredditSubmissionImageStyle.LARGE)) {
-      return c.getResources().getDisplayMetrics().widthPixels;
+    if (subredditSubmissionImageStyle.get().equals(SubredditSubmissionImageStyle.THUMBNAIL)) {
+      return c.getResources().getDimensionPixelSize(R.dimen.subreddit_submission_thumbnail);
     }
-    return c.getResources().getDimensionPixelSize(R.dimen.subreddit_submission_thumbnail);
+    return c.getResources().getDisplayMetrics().widthPixels;
   }
 }
