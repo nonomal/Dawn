@@ -7,11 +7,12 @@ import androidx.annotation.Nullable;
 import com.google.auto.value.AutoValue;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 @AutoValue
-public abstract class ImgurAlbumLink extends MediaLink implements Parcelable {
+public abstract class ImgurAlbumLink extends PictureAlbumLink<ImgurLink> implements Parcelable {
 
   @Override
   public abstract String unparsedUrl();
@@ -28,24 +29,11 @@ public abstract class ImgurAlbumLink extends MediaLink implements Parcelable {
     return albumTitle() != null && !albumTitle().isEmpty();
   }
 
+  @Override
   public abstract String coverImageUrl();
 
+  @Override
   public abstract List<ImgurLink> images();
-
-  @Override
-  public Link.Type type() {
-    return Link.Type.MEDIA_ALBUM;
-  }
-
-  @Override
-  public String highQualityUrl() {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public String lowQualityUrl() {
-    throw new UnsupportedOperationException();
-  }
 
   @Override
   public String cacheKey() {
