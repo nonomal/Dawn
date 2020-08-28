@@ -38,6 +38,7 @@ import com.jakewharton.rxrelay2.BehaviorRelay;
 import com.jakewharton.rxrelay2.Relay;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
+import me.saket.dank.urlparser.PictureAlbumLink;
 import net.dean.jraw.models.SubmissionPreview;
 
 import java.io.File;
@@ -303,7 +304,7 @@ public class MediaAlbumViewerActivity extends DankActivity implements MediaFragm
         .map(resolvedMediaLink -> {
           // Find all child images under an album.
           if (resolvedMediaLink.isMediaAlbum()) {
-            return ((ImgurAlbumLink) resolvedMediaLink).images();
+            return ((PictureAlbumLink<?>) resolvedMediaLink).images();
           } else {
             return Collections.singletonList(resolvedMediaLink);
           }
@@ -457,7 +458,7 @@ public class MediaAlbumViewerActivity extends DankActivity implements MediaFragm
     return waitTillOnPostCreate
         .observeOn(io())
         .andThen(Single.fromCallable(() -> {
-          if (resolvedMediaLink instanceof ImgurAlbumLink || mediaAlbumAdapter.getCount() > 1) {
+          if (resolvedMediaLink.isMediaAlbum() || mediaAlbumAdapter.getCount() > 1) {
             // Child pages do not know if they're part of an album. Don't let
             // them replace imgur images with reddit-supplied album-cover image.
             return Optional.<SubmissionPreview>empty();

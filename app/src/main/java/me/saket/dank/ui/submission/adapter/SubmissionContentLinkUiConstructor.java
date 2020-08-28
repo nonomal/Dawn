@@ -34,14 +34,7 @@ import me.saket.dank.R;
 import me.saket.dank.data.ErrorResolver;
 import me.saket.dank.data.LinkMetadataRepository;
 import me.saket.dank.data.ResolvedError;
-import me.saket.dank.urlparser.ExternalLink;
-import me.saket.dank.urlparser.ImgurAlbumLink;
-import me.saket.dank.urlparser.Link;
-import me.saket.dank.urlparser.RedditLink;
-import me.saket.dank.urlparser.RedditSubmissionLink;
-import me.saket.dank.urlparser.RedditSubredditLink;
-import me.saket.dank.urlparser.RedditUserLink;
-import me.saket.dank.urlparser.UrlParser;
+import me.saket.dank.urlparser.*;
 import me.saket.dank.utils.Colors;
 import me.saket.dank.utils.Optional;
 import me.saket.dank.utils.Pair;
@@ -97,9 +90,13 @@ public class SubmissionContentLinkUiConstructor {
     } else if (link.isRedditPage()) {
       return streamLoadRedditLink(context, ((RedditLink) link));
 
-    } else if (link.isMediaAlbum() && link instanceof ImgurAlbumLink) {
-      return streamLoadImgurAlbum(context, ((ImgurAlbumLink) link), windowBackgroundColor, redditSuppliedThumbnails);
+    } else if (link.isMediaAlbum()) {
+      String albumTitle = null;
+      if (link instanceof ImgurAlbumLink && ((ImgurAlbumLink) link).hasAlbumTitle())
+        albumTitle = ((ImgurAlbumLink) link).albumTitle();
 
+      return streamLoadMediaAlbum(context, ((PictureAlbumLink<?>) link), Optional.ofNullable(albumTitle),
+          windowBackgroundColor, redditSuppliedThumbnails);
     } else {
       throw new AssertionError("Unknown link: " + link);
     }
@@ -306,9 +303,10 @@ public class SubmissionContentLinkUiConstructor {
     );
   }
 
-  public Observable<SubmissionContentLinkUiModel> streamLoadImgurAlbum(
+  public Observable<SubmissionContentLinkUiModel> streamLoadMediaAlbum(
       Context context,
-      ImgurAlbumLink albumLink,
+      PictureAlbumLink<?> albumLink,
+      Optional<String> albumTitle,
       int windowBackgroundColor,
       ImageWithMultipleVariants redditSuppliedThumbnails)
   {
@@ -316,12 +314,12 @@ public class SubmissionContentLinkUiConstructor {
 
     //noinspection ConstantConditions
     Observable<String> titleStream = Observable.just(
-        albumLink.hasAlbumTitle()
-            ? albumLink.albumTitle()
+        albumTitle.isPresent()
+            ? albumTitle.get()
             : context.getString(R.string.submission_image_album_title));
 
     Observable<String> bylineStream = Observable.just(
-        albumLink.hasAlbumTitle()
+        albumTitle.isPresent()
             ? context.getString(R.string.submission_image_album_label_with_image_count, albumLink.images().size())
             : context.getString(R.string.submission_image_album_image_count, albumLink.images().size()));
 

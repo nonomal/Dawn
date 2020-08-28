@@ -44,6 +44,7 @@ import com.jakewharton.rxrelay2.Relay;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
+import me.saket.dank.urlparser.*;
 import net.dean.jraw.models.Identifiable;
 import net.dean.jraw.models.Message;
 import net.dean.jraw.models.Submission;
@@ -125,10 +126,6 @@ import me.saket.dank.ui.subreddit.SubredditActivity;
 import me.saket.dank.ui.subreddit.events.SubmissionOpenInNewTabSwipeEvent;
 import me.saket.dank.ui.subreddit.events.SubmissionOptionSwipeEvent;
 import me.saket.dank.ui.user.UserSessionRepository;
-import me.saket.dank.urlparser.ImgurAlbumLink;
-import me.saket.dank.urlparser.Link;
-import me.saket.dank.urlparser.MediaLink;
-import me.saket.dank.urlparser.UrlParser;
 import me.saket.dank.utils.Animations;
 import me.saket.dank.utils.DankSubmissionRequest;
 import me.saket.dank.utils.ExoPlayerManager;
