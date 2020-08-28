@@ -34,7 +34,7 @@ import me.saket.dank.ui.submission.BookmarksRepository;
 import me.saket.dank.ui.submission.CachedSubmissionFolder;
 import me.saket.dank.ui.submission.PrivateSubredditException;
 import me.saket.dank.ui.submission.SubredditNotFoundException;
-import me.saket.dank.ui.submission.adapter.ImageWithMultipleVariants;
+import me.saket.dank.utils.ImageWithMultipleVariants;
 import me.saket.dank.ui.subreddit.SubmissionPaginationResult;
 import me.saket.dank.ui.subreddit.SubmissionThumbnailTypeMinusNsfw;
 import me.saket.dank.utils.JrawUtils2;

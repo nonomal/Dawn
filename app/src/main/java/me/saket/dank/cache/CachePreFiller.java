@@ -39,7 +39,7 @@ import me.saket.dank.ui.submission.AuditedCommentSort;
 import me.saket.dank.ui.submission.AuditedCommentSort.SelectedBy;
 import me.saket.dank.ui.submission.SubmissionImageLoader;
 import me.saket.dank.ui.submission.SubmissionRepository;
-import me.saket.dank.ui.submission.adapter.ImageWithMultipleVariants;
+import me.saket.dank.utils.ImageWithMultipleVariants;
 import me.saket.dank.ui.submission.adapter.SubmissionContentLinkUiConstructor;
 import me.saket.dank.utils.DankSubmissionRequest;
 import me.saket.dank.utils.NetworkStateListener;

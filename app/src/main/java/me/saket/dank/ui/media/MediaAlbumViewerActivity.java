@@ -68,7 +68,7 @@ import me.saket.dank.di.Dank;
 import me.saket.dank.notifs.MediaDownloadService;
 import me.saket.dank.ui.DankActivity;
 import me.saket.dank.ui.preferences.NetworkStrategy;
-import me.saket.dank.ui.submission.adapter.ImageWithMultipleVariants;
+import me.saket.dank.utils.ImageWithMultipleVariants;
 import me.saket.dank.urlparser.MediaLink;
 import me.saket.dank.utils.Animations;
 import me.saket.dank.utils.Files2;

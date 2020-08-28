@@ -1,8 +1,7 @@
-package me.saket.dank.ui.submission.adapter
+package me.saket.dank.utils
 
 import android.text.Html
 import me.saket.dank.urlparser.UrlParser
-import me.saket.dank.utils.Optional
 import net.dean.jraw.models.SubmissionPreview
 import java.util.*
 import kotlin.math.abs

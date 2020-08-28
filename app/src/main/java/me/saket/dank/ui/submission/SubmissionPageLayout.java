@@ -93,7 +93,7 @@ import me.saket.dank.ui.media.MediaLinkWithStartingPosition;
 import me.saket.dank.ui.preferences.UserPreferenceGroup;
 import me.saket.dank.ui.preferences.UserPreferencesActivity;
 import me.saket.dank.ui.submission.adapter.CommentsItemDiffer;
-import me.saket.dank.ui.submission.adapter.ImageWithMultipleVariants;
+import me.saket.dank.utils.ImageWithMultipleVariants;
 import me.saket.dank.ui.submission.adapter.SubmissionCommentInlineReply;
 import me.saket.dank.ui.submission.adapter.SubmissionCommentRowType;
 import me.saket.dank.ui.submission.adapter.SubmissionCommentsAdapter;
