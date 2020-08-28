@@ -38,7 +38,7 @@ import com.jakewharton.rxrelay2.BehaviorRelay;
 import com.jakewharton.rxrelay2.Relay;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
-import me.saket.dank.urlparser.PictureAlbumLink;
+import me.saket.dank.urlparser.MediaAlbumLink;
 import net.dean.jraw.models.SubmissionPreview;
 
 import java.io.File;
@@ -69,7 +69,6 @@ import me.saket.dank.notifs.MediaDownloadService;
 import me.saket.dank.ui.DankActivity;
 import me.saket.dank.ui.preferences.NetworkStrategy;
 import me.saket.dank.ui.submission.adapter.ImageWithMultipleVariants;
-import me.saket.dank.urlparser.ImgurAlbumLink;
 import me.saket.dank.urlparser.MediaLink;
 import me.saket.dank.utils.Animations;
 import me.saket.dank.utils.Files2;
@@ -304,7 +303,7 @@ public class MediaAlbumViewerActivity extends DankActivity implements MediaFragm
         .map(resolvedMediaLink -> {
           // Find all child images under an album.
           if (resolvedMediaLink.isMediaAlbum()) {
-            return ((PictureAlbumLink<?>) resolvedMediaLink).images();
+            return ((MediaAlbumLink<?>) resolvedMediaLink).images();
           } else {
             return Collections.singletonList(resolvedMediaLink);
           }

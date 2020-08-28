@@ -1,6 +1,6 @@
 package me.saket.dank.urlparser
 
-abstract class PictureAlbumLink<out L: MediaLink>: MediaLink() {
+abstract class MediaAlbumLink<out L: MediaLink>: MediaLink() {
   override fun type(): Type = Type.MEDIA_ALBUM
   override fun isGif(): Boolean = false
   override fun highQualityUrl(): String = throw UnsupportedOperationException()

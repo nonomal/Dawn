@@ -219,7 +219,7 @@ public class CachePreFiller {
     Observable<Drawable> albumImagesLoad = replayedResolvedLinks
         .filter(resolvedLink -> resolvedLink.isMediaAlbum())
         .flatMap(link -> {
-          PictureAlbumLink<?> albumLink = (PictureAlbumLink<?>) link;
+          MediaAlbumLink<?> albumLink = (MediaAlbumLink<?>) link;
           MediaLink firstImage = albumLink.images().get(0);
           Single<Drawable> firstImageLoad = submissionImageLoader.get().load(appContext, firstImage, imageLoadOptions);
 

@@ -95,7 +95,7 @@ public class SubmissionContentLinkUiConstructor {
       if (link instanceof ImgurAlbumLink && ((ImgurAlbumLink) link).hasAlbumTitle())
         albumTitle = ((ImgurAlbumLink) link).albumTitle();
 
-      return streamLoadMediaAlbum(context, ((PictureAlbumLink<?>) link), Optional.ofNullable(albumTitle),
+      return streamLoadMediaAlbum(context, ((MediaAlbumLink<?>) link), Optional.ofNullable(albumTitle),
           windowBackgroundColor, redditSuppliedThumbnails);
     } else {
       throw new AssertionError("Unknown link: " + link);
@@ -305,7 +305,7 @@ public class SubmissionContentLinkUiConstructor {
 
   public Observable<SubmissionContentLinkUiModel> streamLoadMediaAlbum(
       Context context,
-      PictureAlbumLink<?> albumLink,
+      MediaAlbumLink<?> albumLink,
       Optional<String> albumTitle,
       int windowBackgroundColor,
       ImageWithMultipleVariants redditSuppliedThumbnails)
