@@ -113,7 +113,7 @@ public class UrlParser {
           parsedLink = RedditSubmissionLink.create(url, submissionId, null);
         } else if (config.galleryPattern().matcher(urlPath).matches()) {
           if (submission.isPresent() && submission.get().isGallery()) {
-            throw new UnsupportedOperationException();
+            parsedLink = RedditGalleryLink.create(url, submission.get());
           } else {
             parsedLink = ExternalLink.create(url);
           }
