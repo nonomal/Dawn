@@ -2,14 +2,34 @@ package me.saket.dank.utils
 
 import android.text.Html
 import me.saket.dank.urlparser.UrlParser
+import net.dean.jraw.models.MediaMetadataPreview
 import net.dean.jraw.models.SubmissionPreview
 import java.util.*
 import kotlin.math.abs
 
-class ImageWithMultipleVariants private constructor(private val optionalRedditPreviews: Optional<SubmissionPreview>) {
+data class ImageVariant(
+    val width: Int,
+    val height: Int,
+    private val rawUrl: String,
+    private val urlIsHtmlEncoded: Boolean
+) {
+  /**
+   * Returned URL is never escaped
+   */
+  val url: String
+    get() = if (urlIsHtmlEncoded) Html.fromHtml(rawUrl).toString() else rawUrl
+}
+
+class ImageWithMultipleVariants(
+    val source: ImageVariant?,
+    val variants: List<ImageVariant>
+) {
 
   val isNonEmpty: Boolean
-    get() = optionalRedditPreviews.isPresent
+    get() = source != null
+
+  fun orElse(other: () -> ImageWithMultipleVariants): ImageWithMultipleVariants =
+      if (this.isNonEmpty) this else other()
 
   /**
    * Find an image provided by Reddit that is the closest to <var>preferredWidth</var>.
@@ -18,18 +38,15 @@ class ImageWithMultipleVariants private constructor(private val optionalRedditPr
    * @param minWidth Minimum preview width.
    * Specify -1 to find any preview. minWidth is ignored if it larger than preferredWidth
    */
-  fun findNearestFor(preferredWidth: Int, minWidth: Int): SubmissionPreview.Variation? {
-    if (optionalRedditPreviews.isEmpty) {
-      return null
-    }
+  fun findNearestFor(preferredWidth: Int, minWidth: Int): ImageVariant? {
+    if (source == null) return null
 
     val minWidthChecked = if (minWidth > preferredWidth) -1 else minWidth
 
-    val redditPreviews = optionalRedditPreviews.get().images[0]
-    var closestImage: SubmissionPreview.Variation = redditPreviews.source
-    var closestDifference = preferredWidth - redditPreviews.source.width
+    var closestImage: ImageVariant = source
+    var closestDifference = preferredWidth - source.width
 
-    for (variation in redditPreviews.resolutions) {
+    for (variation in variants) {
       val differenceAbs = abs(preferredWidth - variation.width)
       if (differenceAbs < abs(closestDifference)
         // If another image is found with the same difference, choose the higher-res image.
@@ -40,21 +57,12 @@ class ImageWithMultipleVariants private constructor(private val optionalRedditPr
       }
     }
 
-    return if (closestImage.width < minWidthChecked) null else {
-      closestImage
-    }
+    return if (closestImage.width < minWidthChecked) null else closestImage
   }
 
   @Suppress("DEPRECATION")
-  fun findNearestUrlFor(preferredWidth: Int, minWidth: Int): String? {
-    val url = findNearestFor(preferredWidth, minWidth)?.url
-    return if (url != null) {
-      // Reddit sends HTML-escaped URLs.
-      Html.fromHtml(url).toString()
-    } else {
-      null
-    }
-  }
+  fun findNearestUrlFor(preferredWidth: Int, minWidth: Int): String? =
+    findNearestFor(preferredWidth, minWidth)?.url
 
   fun findNearestUrlFor(preferredWidth: Int): String {
     return findNearestUrlFor(preferredWidth, -1) ?:
@@ -78,11 +86,13 @@ class ImageWithMultipleVariants private constructor(private val optionalRedditPr
     const val DEFAULT_VIEWER_MIN_WIDTH = 1200
 
     fun of(redditSuppliedImages: SubmissionPreview?): ImageWithMultipleVariants {
-      return ImageWithMultipleVariants(Optional.ofNullable(redditSuppliedImages))
+      val mapF: (SubmissionPreview.Variation) -> ImageVariant =
+          { ImageVariant(it.width, it.height, it.url, urlIsHtmlEncoded = true) }
+      val img = redditSuppliedImages?.images?.getOrNull(0)
+      return ImageWithMultipleVariants(img?.source?.let(mapF), img?.resolutions?.map(mapF) ?: emptyList())
     }
 
-    fun of(redditSuppliedImages: Optional<SubmissionPreview>): ImageWithMultipleVariants {
-      return ImageWithMultipleVariants(redditSuppliedImages)
-    }
+    fun of(redditSuppliedImages: Optional<SubmissionPreview>): ImageWithMultipleVariants =
+      this.of(redditSuppliedImages.value())
   }
 }
