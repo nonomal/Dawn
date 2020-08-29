@@ -2,6 +2,7 @@ package me.saket.dank.utils
 
 import android.text.Html
 import me.saket.dank.urlparser.UrlParser
+import net.dean.jraw.models.MediaMetadataItem
 import net.dean.jraw.models.MediaMetadataPreview
 import net.dean.jraw.models.SubmissionPreview
 import java.util.*
@@ -84,6 +85,15 @@ class ImageWithMultipleVariants(
   companion object {
 
     const val DEFAULT_VIEWER_MIN_WIDTH = 1200
+
+    fun of(mediaMetadata: MediaMetadataItem?): ImageWithMultipleVariants {
+      val mapF: (MediaMetadataPreview) -> ImageVariant =
+          { ImageVariant(it.width, it.height, it.url, urlIsHtmlEncoded = true) }
+      return ImageWithMultipleVariants(
+          mediaMetadata?.full?.let(mapF),
+          mediaMetadata?.previews?.map(mapF) ?: emptyList()
+      )
+    }
 
     fun of(redditSuppliedImages: SubmissionPreview?): ImageWithMultipleVariants {
       val mapF: (SubmissionPreview.Variation) -> ImageVariant =
