@@ -18,7 +18,7 @@ data class RedditGalleryLink(
     @JvmStatic fun create(galleryUrl: String, submission: Submission): RedditGalleryLink {
       val images = submission.galleryData?.items?.map {
         val meta = submission.mediaMetadata?.get(it.mediaId)
-        val lq = meta?.previews?.last()?.url
+        val lq = meta?.previews?.last()?.imgUrl
 
         val (ext, mediaType) = when (meta?.mime) {
           "image/jpeg" -> Pair("jpg", Type.SINGLE_IMAGE)

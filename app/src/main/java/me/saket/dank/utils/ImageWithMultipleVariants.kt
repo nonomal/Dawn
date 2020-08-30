@@ -87,19 +87,23 @@ class ImageWithMultipleVariants(
     const val DEFAULT_VIEWER_MIN_WIDTH = 1200
 
     fun of(mediaMetadata: MediaMetadataItem?): ImageWithMultipleVariants {
-      val mapF: (MediaMetadataPreview) -> ImageVariant =
-          { ImageVariant(it.width, it.height, it.url, urlIsHtmlEncoded = true) }
-      return ImageWithMultipleVariants(
-          mediaMetadata?.full?.let(mapF),
-          mediaMetadata?.previews?.map(mapF) ?: emptyList()
-      )
+      val mapF: (MediaMetadataPreview) -> ImageVariant? = { p ->
+        p.imgUrl?.let { ImageVariant(p.width, p.height, it, urlIsHtmlEncoded = true) }
+      }
+      val previews = mediaMetadata?.previews?.mapNotNull(mapF) ?: emptyList()
+      return mediaMetadata?.full?.let(mapF)
+          ?.let { ImageWithMultipleVariants(it, previews) }
+          ?: ImageWithMultipleVariants(previews.getOrNull(0), previews.drop(1))
     }
 
     fun of(redditSuppliedImages: SubmissionPreview?): ImageWithMultipleVariants {
       val mapF: (SubmissionPreview.Variation) -> ImageVariant =
           { ImageVariant(it.width, it.height, it.url, urlIsHtmlEncoded = true) }
       val img = redditSuppliedImages?.images?.getOrNull(0)
-      return ImageWithMultipleVariants(img?.source?.let(mapF), img?.resolutions?.map(mapF) ?: emptyList())
+      return ImageWithMultipleVariants(
+          img?.source?.let(mapF),
+          img?.resolutions?.map(mapF) ?: emptyList()
+      )
     }
 
     fun of(redditSuppliedImages: Optional<SubmissionPreview>): ImageWithMultipleVariants =
