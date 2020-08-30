@@ -17,18 +17,25 @@ data class RedditGalleryLink(
   companion object {
     @JvmStatic fun create(galleryUrl: String, submission: Submission): RedditGalleryLink {
       val images = submission.galleryData?.items?.map {
-        val meta = submission.mediaMetadata?.get(it.mediaId)
+        val id = it.mediaId
+        val meta = submission.mediaMetadata?.get(id)
         val lq = meta?.previews?.last()?.imgUrl
 
-        val (ext, mediaType) = when (meta?.mime) {
-          "image/jpeg" -> Pair("jpg", Type.SINGLE_IMAGE)
-          "image/png" -> Pair("png", Type.SINGLE_IMAGE)
-          "image/webp" -> Pair("webp", Type.SINGLE_IMAGE)
-          "image/gif" -> Pair("gif", Type.SINGLE_GIF)
-          else -> throw UnsupportedOperationException("Unknown mime type: ${meta?.mime}")
+        val (hqUrl, mediaType) = if (meta != null && meta.mime == "image/gif") {
+          meta.full.mp4Url
+              ?.let { u -> Pair(u, Type.SINGLE_VIDEO) }
+              ?: Pair("https://i.redd.it/$id.gif", Type.SINGLE_GIF)
+        } else {
+          val ext = when (meta?.mime) {
+            "image/jpeg" -> "jpg"
+            "image/png" -> "png"
+            "image/webp" -> "webp"
+            else -> throw UnsupportedOperationException("Unknown mime type: ${meta?.mime}")
+          }
+          Pair("https://i.redd.it/$id.$ext", Type.SINGLE_IMAGE)
         }
 
-        RedditGalleryImageLink("$it.$ext", lq, mediaType, it.caption)
+        RedditGalleryImageLink(hqUrl, lq, mediaType, it.caption)
       } ?: emptyList()
 
       if (images.isEmpty()) throw IllegalStateException("Attempting to create an empty gallery")
@@ -45,7 +52,7 @@ data class RedditGalleryLink(
 @JsonClass(generateAdapter = true)
 @Parcelize
 data class RedditGalleryImageLink(
-    val highQualityFilename: String,
+    val highQualityUrl: String,
     val lowQualityUrl: String?,
     val mediaType: Type,
     val title: String?
@@ -53,8 +60,8 @@ data class RedditGalleryImageLink(
   override fun type(): Type = mediaType
   override fun isGif(): Boolean = mediaType == Type.SINGLE_GIF
   override fun unparsedUrl(): String = highQualityUrl()
-  override fun cacheKey(): String = cacheKeyWithClassName(highQualityFilename)
-  override fun lowQualityUrl(): String = lowQualityUrl ?: highQualityUrl()
-  override fun highQualityUrl(): String = "https://i.redd.it/$highQualityFilename"
+  override fun cacheKey(): String = cacheKeyWithClassName(highQualityUrl)
+  override fun lowQualityUrl(): String = lowQualityUrl ?: highQualityUrl
+  override fun highQualityUrl(): String = highQualityUrl
   override fun title(): String? = title
 }
