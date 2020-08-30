@@ -23,9 +23,11 @@ public abstract class ImgurLink extends MediaLink implements Parcelable {
   public abstract Link.Type type();
 
   @Nullable
+  @Override
   public abstract String title();
 
   @Nullable
+  @Override
   public abstract String description();
 
   @Override

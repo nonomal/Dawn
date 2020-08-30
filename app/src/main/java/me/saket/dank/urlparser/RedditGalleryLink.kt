@@ -16,8 +16,8 @@ data class RedditGalleryLink(
 
   companion object {
     @JvmStatic fun create(galleryUrl: String, submission: Submission): RedditGalleryLink {
-      val images = submission.galleryData?.mediaIds?.map {
-        val meta = submission.mediaMetadata?.get(it)
+      val images = submission.galleryData?.items?.map {
+        val meta = submission.mediaMetadata?.get(it.mediaId)
         val lq = meta?.previews?.last()?.url
 
         val (ext, mediaType) = when (meta?.mime) {
@@ -28,7 +28,7 @@ data class RedditGalleryLink(
           else -> throw UnsupportedOperationException("Unknown mime type: ${meta?.mime}")
         }
 
-        RedditGalleryImageLink("$it.$ext", lq, mediaType)
+        RedditGalleryImageLink("$it.$ext", lq, mediaType, it.caption)
       } ?: emptyList()
 
       if (images.isEmpty()) throw IllegalStateException("Attempting to create an empty gallery")
@@ -47,7 +47,8 @@ data class RedditGalleryLink(
 data class RedditGalleryImageLink(
     val highQualityFilename: String,
     val lowQualityUrl: String?,
-    val mediaType: Type
+    val mediaType: Type,
+    val title: String?
 ): MediaLink(), Parcelable {
   override fun type(): Type = mediaType
   override fun isGif(): Boolean = mediaType == Type.SINGLE_GIF
@@ -55,4 +56,5 @@ data class RedditGalleryImageLink(
   override fun cacheKey(): String = cacheKeyWithClassName(highQualityFilename)
   override fun lowQualityUrl(): String = lowQualityUrl ?: highQualityUrl()
   override fun highQualityUrl(): String = "https://i.redd.it/$highQualityFilename"
+  override fun title(): String? = title
 }

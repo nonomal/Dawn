@@ -9,7 +9,9 @@ abstract class MediaLink : Link() {
   abstract fun cacheKey(): String?
   abstract fun highQualityUrl(): String?
   abstract fun lowQualityUrl(): String?
-  
+  open fun title(): String? = null
+  open fun description(): String? = null
+
   open fun previewVariants(): ImageWithMultipleVariants? = null
 
   override fun isGif(): Boolean = UrlParser.isGifUrl(unparsedUrl())
