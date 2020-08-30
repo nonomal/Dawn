@@ -1,16 +1,18 @@
 package me.saket.dank.urlparser
 
+import me.saket.dank.utils.ImageWithMultipleVariants
+
 /**
  * An image, GIF or a video. See implementations.
  */
 abstract class MediaLink : Link() {
+  abstract fun cacheKey(): String?
   abstract fun highQualityUrl(): String?
   abstract fun lowQualityUrl(): String?
-  abstract fun cacheKey(): String?
+  
+  open fun previewVariants(): ImageWithMultipleVariants? = null
 
-  override fun isGif(): Boolean {
-    return UrlParser.isGifUrl(unparsedUrl())
-  }
+  override fun isGif(): Boolean = UrlParser.isGifUrl(unparsedUrl())
 
   fun cacheKeyWithClassName(key: String): String {
     val name = javaClass.simpleName
