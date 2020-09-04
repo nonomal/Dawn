@@ -19,12 +19,12 @@ data class RedditGalleryLink(
       val images = submission.galleryData?.items?.map {
         val id = it.mediaId
         val meta = submission.mediaMetadata?.get(id)
-        val lq = meta?.previews?.last()?.imgUrl
 
-        val (hqUrl, mediaType) = if (meta != null && meta.mime == "image/gif") {
-          meta.full.mp4Url
+        val (hqUrl, lqUrl, mediaType) = if (meta != null && meta.mime == "image/gif") {
+          val (url, mediaType) = meta.full.mp4Url
               ?.let { u -> Pair(u, Type.SINGLE_VIDEO) }
               ?: Pair("https://i.redd.it/$id.gif", Type.SINGLE_GIF)
+          Triple(url, url, mediaType)
         } else {
           val ext = when (meta?.mime) {
             "image/jpeg", "image/jpg" -> "jpg"
@@ -32,10 +32,14 @@ data class RedditGalleryLink(
             "image/webp" -> "webp"
             else -> throw UnsupportedOperationException("Unknown mime type: ${meta?.mime}")
           }
-          Pair("https://i.redd.it/$id.$ext", Type.SINGLE_IMAGE)
+          Triple(
+              "https://i.redd.it/$id.$ext",
+              meta.previews.lastOrNull()?.imgUrl,
+              Type.SINGLE_IMAGE
+          )
         }
 
-        RedditGalleryImageLink(hqUrl, lq, mediaType, it.caption)
+        RedditGalleryImageLink(hqUrl, lqUrl, mediaType, it.caption)
       } ?: emptyList()
 
       if (images.isEmpty()) throw IllegalStateException("Attempting to create an empty gallery")
