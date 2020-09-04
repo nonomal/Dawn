@@ -10,6 +10,8 @@ import androidx.core.content.ContextCompat;
 
 import com.f2prateek.rx.preferences2.Preference;
 
+import me.saket.dank.urlparser.RedditGalleryImageLink;
+import me.saket.dank.urlparser.RedditGalleryLink;
 import me.saket.dank.utils.*;
 import net.dean.jraw.models.Submission;
 import net.dean.jraw.models.SubmissionPreview;
@@ -308,6 +310,13 @@ public class SubredditUiConstructor {
                 .contentDescription(c.getString(R.string.cd_subreddit_submission_item_nsfw_post))
                 .build());
 
+      } else if (submission.isGallery()) { // gallery posts don't have preview field
+        RedditGalleryImageLink first = RedditGalleryLink.extractFirstImage(submission);
+        if (first == null || first.previewVariants() == null)
+          thumbnail = Optional.empty();
+        else
+          thumbnail = Optional.of(thumbnailForRemoteImage(c, first.previewVariants()));
+
       } else {
         switch (thumbnailType) {
           case SELF_POST:
@@ -400,9 +409,12 @@ public class SubredditUiConstructor {
   }
 
   private SubredditSubmission.UiModel.Thumbnail thumbnailForRemoteImage(Context c, SubmissionPreview preview) {
-    ImageWithMultipleVariants redditThumbnails = ImageWithMultipleVariants.Companion.of(preview);
+    return thumbnailForRemoteImage(c, ImageWithMultipleVariants.Companion.of(preview));
+  }
+
+  private SubredditSubmission.UiModel.Thumbnail thumbnailForRemoteImage(Context c, ImageWithMultipleVariants thumbs) {
     int preferredWidth = getPreferredWidthForThumbnail(c);
-    Optional<ImageVariant> optimizedThumbnail = Optional.ofNullable(redditThumbnails.findNearestFor(preferredWidth, -1));
+    Optional<ImageVariant> optimizedThumbnail = Optional.ofNullable(thumbs.findNearestFor(preferredWidth, -1));
     Optional<String> optimizedThumbnailUrl = optimizedThumbnail.map(ImageVariant::getUrl);
     Optional<Integer> thumbnailFullHeight = optimizedThumbnail.map(thumbnail -> getFullHeightForThumbnail(preferredWidth, thumbnail));
 

@@ -4,7 +4,6 @@ import android.os.Parcelable
 import com.squareup.moshi.JsonClass
 import kotlinx.android.parcel.Parcelize
 import me.saket.dank.utils.ImageWithMultipleVariants
-import net.dean.jraw.models.MediaMetadataItem
 import net.dean.jraw.models.Submission
 import java.lang.IllegalStateException
 import java.lang.UnsupportedOperationException
@@ -17,8 +16,8 @@ data class RedditGalleryLink(
 ): MediaAlbumLink<RedditGalleryImageLink>(), Parcelable {
 
   companion object {
-    @JvmStatic fun create(galleryUrl: String, submission: Submission): RedditGalleryLink {
-      val images = submission.galleryData?.items?.map {
+    @JvmStatic fun extractImages(submission: Submission): Sequence<RedditGalleryImageLink> {
+      return submission.galleryData?.items?.asSequence()?.map {
         val id = it.mediaId
         val meta = submission.mediaMetadata?.get(id)
 
@@ -43,10 +42,17 @@ data class RedditGalleryLink(
 
         val previews = ImageWithMultipleVariants.of(meta)
         RedditGalleryImageLink(hqUrl, lqUrl, previews, mediaType, it.caption)
-      } ?: emptyList()
+      }  ?: emptySequence()
+    }
 
-      if (images.isEmpty()) throw IllegalStateException("Attempting to create an empty gallery")
-      return RedditGalleryLink(galleryUrl, images)
+    @JvmStatic fun extractFirstImage(submission: Submission): RedditGalleryImageLink? {
+      return extractImages(submission).firstOrNull()
+    }
+
+    @JvmStatic fun create(galleryUrl: String, submission: Submission): RedditGalleryLink {
+      val images = extractImages(submission)
+      if (images.none()) throw IllegalStateException("Attempting to create an empty gallery")
+      return RedditGalleryLink(galleryUrl, images.toList())
     }
   }
 
