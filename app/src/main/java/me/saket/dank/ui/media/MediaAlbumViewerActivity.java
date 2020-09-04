@@ -244,15 +244,17 @@ public class MediaAlbumViewerActivity extends DankActivity implements MediaFragm
           String highQualityUrl = activeMediaItem.mediaLink().highQualityUrl();
           String optimizedQualityUrl;
 
-          if (activeMediaItem.mediaLink().isGif()) {
+          if (!activeMediaItem.mediaLink().isImage()) {
             optimizedQualityUrl = activeMediaItem.mediaLink().lowQualityUrl();
           } else {
-            ImageWithMultipleVariants imageVariants = ImageWithMultipleVariants.Companion.of(redditSuppliedImages);
-            optimizedQualityUrl = imageVariants.findNearestUrlFor(
-                getResources().getDisplayMetrics().widthPixels,
-                ImageWithMultipleVariants.DEFAULT_VIEWER_MIN_WIDTH,
-                activeMediaItem.mediaLink().lowQualityUrl() /* defaultValue */
-            );
+            optimizedQualityUrl = ImageWithMultipleVariants.Companion
+                .of(redditSuppliedImages)
+                .orElse(() -> activeMediaItem.mediaLink().previewVariants())
+                .findNearestUrlFor(
+                    getResources().getDisplayMetrics().widthPixels,
+                    ImageWithMultipleVariants.DEFAULT_VIEWER_MIN_WIDTH,
+                    activeMediaItem.mediaLink().lowQualityUrl() /* defaultValue */
+                );
           }
 
           //noinspection ConstantConditions
@@ -648,12 +650,14 @@ public class MediaAlbumViewerActivity extends DankActivity implements MediaFragm
 
     Observable<File> optimizedResImageFileStream = getRedditSuppliedImages()
         .flatMapObservable(redditImages -> Observable.create(emitter -> {
-          ImageWithMultipleVariants imageVariants = ImageWithMultipleVariants.Companion.of(redditImages);
-          String optimizedQualityImageForDevice = imageVariants.findNearestUrlFor(
-              getDeviceDisplayWidth(),
-              ImageWithMultipleVariants.DEFAULT_VIEWER_MIN_WIDTH,
-              albumItem.mediaLink().lowQualityUrl()
-          );
+          String optimizedQualityImageForDevice = ImageWithMultipleVariants.Companion
+              .of(redditImages)
+              .orElse(() -> albumItem.mediaLink().previewVariants())
+              .findNearestUrlFor(
+                  getDeviceDisplayWidth(),
+                  ImageWithMultipleVariants.DEFAULT_VIEWER_MIN_WIDTH,
+                  albumItem.mediaLink().lowQualityUrl()
+              );
 
           FutureTarget<File> optimizedResolutionImageTarget = Glide.with(this)
               .download(optimizedQualityImageForDevice)

@@ -33,8 +33,8 @@ class ImageWithMultipleVariants(
   val isNonEmpty: Boolean
     get() = source != null
 
-  fun orElse(other: () -> ImageWithMultipleVariants): ImageWithMultipleVariants =
-      if (this.isNonEmpty) this else other()
+  fun orElse(other: () -> ImageWithMultipleVariants?): ImageWithMultipleVariants =
+      if (this.isNonEmpty) this else other() ?: this
 
   /**
    * Find an image provided by Reddit that is the closest to <var>preferredWidth</var>.
