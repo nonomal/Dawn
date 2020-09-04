@@ -27,7 +27,7 @@ data class RedditGalleryLink(
               ?: Pair("https://i.redd.it/$id.gif", Type.SINGLE_GIF)
         } else {
           val ext = when (meta?.mime) {
-            "image/jpeg" -> "jpg"
+            "image/jpeg", "image/jpg" -> "jpg"
             "image/png" -> "png"
             "image/webp" -> "webp"
             else -> throw UnsupportedOperationException("Unknown mime type: ${meta?.mime}")
