@@ -3,6 +3,8 @@ package me.saket.dank.urlparser
 import android.os.Parcelable
 import com.squareup.moshi.JsonClass
 import kotlinx.android.parcel.Parcelize
+import me.saket.dank.utils.ImageWithMultipleVariants
+import net.dean.jraw.models.MediaMetadataItem
 import net.dean.jraw.models.Submission
 import java.lang.IllegalStateException
 import java.lang.UnsupportedOperationException
@@ -24,7 +26,7 @@ data class RedditGalleryLink(
           val (url, mediaType) = meta.full.mp4Url
               ?.let { u -> Pair(u, Type.SINGLE_VIDEO) }
               ?: Pair("https://i.redd.it/$id.gif", Type.SINGLE_GIF)
-          Triple(url, url, mediaType)
+          Triple(url, null, mediaType)
         } else {
           val ext = when (meta?.mime) {
             "image/jpeg", "image/jpg" -> "jpg"
@@ -39,7 +41,8 @@ data class RedditGalleryLink(
           )
         }
 
-        RedditGalleryImageLink(hqUrl, lqUrl, mediaType, it.caption)
+        val previews = ImageWithMultipleVariants.of(meta)
+        RedditGalleryImageLink(hqUrl, lqUrl, previews, mediaType, it.caption)
       } ?: emptyList()
 
       if (images.isEmpty()) throw IllegalStateException("Attempting to create an empty gallery")
@@ -58,6 +61,7 @@ data class RedditGalleryLink(
 data class RedditGalleryImageLink(
     val highQualityUrl: String,
     val lowQualityUrl: String?,
+    val previews: ImageWithMultipleVariants?,
     val mediaType: Type,
     val title: String?
 ): MediaLink(), Parcelable {
@@ -65,6 +69,7 @@ data class RedditGalleryImageLink(
   override fun isGif(): Boolean = mediaType == Type.SINGLE_GIF
   override fun unparsedUrl(): String = highQualityUrl()
   override fun cacheKey(): String = cacheKeyWithClassName(highQualityUrl)
+  override fun previewVariants(): ImageWithMultipleVariants? = previews
   override fun lowQualityUrl(): String = lowQualityUrl ?: highQualityUrl
   override fun highQualityUrl(): String = highQualityUrl
   override fun title(): String? = title

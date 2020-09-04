@@ -1,6 +1,8 @@
 package me.saket.dank.utils
 
+import android.os.Parcelable
 import android.text.Html
+import kotlinx.android.parcel.Parcelize
 import me.saket.dank.urlparser.UrlParser
 import net.dean.jraw.models.MediaMetadataItem
 import net.dean.jraw.models.MediaMetadataPreview
@@ -8,12 +10,13 @@ import net.dean.jraw.models.SubmissionPreview
 import java.util.*
 import kotlin.math.abs
 
+@Parcelize
 data class ImageVariant(
     val width: Int,
     val height: Int,
     private val rawUrl: String,
     private val urlIsHtmlEncoded: Boolean
-) {
+): Parcelable {
   /**
    * Returned URL is never escaped
    */
@@ -21,10 +24,11 @@ data class ImageVariant(
     get() = if (urlIsHtmlEncoded) Html.fromHtml(rawUrl).toString() else rawUrl
 }
 
+@Parcelize
 class ImageWithMultipleVariants(
     val source: ImageVariant?,
     val variants: List<ImageVariant>
-) {
+): Parcelable {
 
   val isNonEmpty: Boolean
     get() = source != null
