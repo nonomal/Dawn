@@ -51,6 +51,8 @@ public class DankApplication extends Application {
       Timber.plant(Dank.dependencyInjector().crashReporter().timberTree());
     }
 
+    new AppUpdateActions(this).handleUpdate();
+
     if (BuildConfig.DEBUG) {
       if (!isRoboUnitTest()) {
         Stetho.initializeWithDefaults(this);
