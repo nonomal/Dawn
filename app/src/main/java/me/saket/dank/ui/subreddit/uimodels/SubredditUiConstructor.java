@@ -312,10 +312,11 @@ public class SubredditUiConstructor {
 
       } else if (submission.isGallery()) { // gallery posts don't have preview field
         RedditGalleryImageLink first = RedditGalleryLink.extractFirstImage(submission);
-        if (first == null || first.previewVariants() == null)
+        if (first == null || first.previewVariants() == null) {
           thumbnail = Optional.empty();
-        else
+        } else {
           thumbnail = Optional.of(thumbnailForRemoteImage(c, first.previewVariants()));
+        }
 
       } else {
         switch (thumbnailType) {
