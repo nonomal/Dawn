@@ -26,7 +26,7 @@ data class RedditGalleryLink(
         val meta = submission.mediaMetadata?.get(id)
 
         val (hqUrl, lqUrl, mediaType) = if (meta != null && meta.mime == "image/gif") {
-          val (url, mediaType) = meta.full.mp4Url
+          val (url, mediaType) = meta.full?.mp4Url
               ?.let { u -> Pair(u, Type.SINGLE_VIDEO) }
               ?: Pair("https://i.redd.it/$id.gif", Type.SINGLE_GIF)
           Triple(url, null, mediaType)
@@ -39,7 +39,7 @@ data class RedditGalleryLink(
           }
           Triple(
               "https://i.redd.it/$id.$ext",
-              meta.previews.lastOrNull()?.imgUrl,
+              meta.previews?.lastOrNull()?.imgUrl,
               Type.SINGLE_IMAGE
           )
         }
