@@ -4,9 +4,13 @@ import android.os.Parcelable
 import com.squareup.moshi.JsonClass
 import kotlinx.android.parcel.Parcelize
 import me.saket.dank.utils.ImageWithMultipleVariants
+import me.saket.dank.utils.Optional
 import net.dean.jraw.models.Submission
+import timber.log.Timber
 import java.lang.IllegalStateException
 import java.lang.UnsupportedOperationException
+
+private data class UnknownMimeException(val mime: String?): Exception()
 
 @JsonClass(generateAdapter = true)
 @Parcelize
@@ -16,7 +20,7 @@ data class RedditGalleryLink(
 ): MediaAlbumLink<RedditGalleryImageLink>(), Parcelable {
 
   companion object {
-    @JvmStatic fun extractImages(submission: Submission): Sequence<RedditGalleryImageLink> {
+    @JvmStatic fun extractImages(submission: Submission): Sequence<RedditGalleryImageLink>? {
       return submission.galleryData?.items?.asSequence()?.map {
         val id = it.mediaId
         val meta = submission.mediaMetadata?.get(id)
@@ -31,7 +35,7 @@ data class RedditGalleryLink(
             "image/jpeg", "image/jpg" -> "jpg"
             "image/png" -> "png"
             "image/webp" -> "webp"
-            else -> throw UnsupportedOperationException("Unknown mime type: ${meta?.mime}")
+            else -> throw UnknownMimeException(meta?.mime)
           }
           Triple(
               "https://i.redd.it/$id.$ext",
@@ -42,17 +46,23 @@ data class RedditGalleryLink(
 
         val previews = ImageWithMultipleVariants.of(meta)
         RedditGalleryImageLink(hqUrl, lqUrl, previews, mediaType, it.caption)
-      }  ?: emptySequence()
+      }
     }
 
     @JvmStatic fun extractFirstImage(submission: Submission): RedditGalleryImageLink? {
-      return extractImages(submission).firstOrNull()
+      return extractImages(submission)?.firstOrNull()
     }
 
-    @JvmStatic fun create(galleryUrl: String, submission: Submission): RedditGalleryLink {
-      val images = extractImages(submission)
-      if (images.none()) throw IllegalStateException("Attempting to create an empty gallery")
-      return RedditGalleryLink(galleryUrl, images.toList())
+    @JvmStatic fun create(galleryUrl: String, submission: Submission): Optional<RedditGalleryLink> {
+      val images = try {
+        extractImages(submission)?.toList()
+      } catch (e: UnknownMimeException) {
+        Timber.e("Unknown mime type ${e.mime} in reddit gallery $galleryUrl")
+        null
+      }
+
+      return if (images?.isEmpty() != false) Optional.empty()
+      else Optional.of(RedditGalleryLink(galleryUrl, images))
     }
   }
 

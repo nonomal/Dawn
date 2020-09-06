@@ -112,8 +112,10 @@ public class UrlParser {
           String submissionId = urlPath.substring(1);  // Remove the leading slash.
           parsedLink = RedditSubmissionLink.create(url, submissionId, null);
         } else if (config.galleryPattern().matcher(urlPath).matches()) {
-          if (submission.isPresent() && submission.get().isGallery()) {
-            parsedLink = RedditGalleryLink.create(url, submission.get());
+          Optional<RedditGalleryLink> galleryLink;
+          if (submission.isPresent() && submission.get().isGallery() &&
+              (galleryLink = RedditGalleryLink.create(url, submission.get())).isPresent()) {
+            parsedLink = galleryLink.get();
           } else {
             parsedLink = ExternalLink.create(url);
           }
