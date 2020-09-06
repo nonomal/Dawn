@@ -85,15 +85,10 @@ public class SubmissionContentLinkUiConstructor {
       return streamLoadExternalLink(context, (ExternalLink) link, windowBackgroundColor, redditSuppliedThumbnails);
 
     } else if (link.isRedditPage()) {
-      return streamLoadRedditLink(context, ((RedditLink) link));
+      return streamLoadRedditLink(context, (RedditLink) link);
 
     } else if (link.isMediaAlbum()) {
-      String albumTitle = null;
-      if (link instanceof ImgurAlbumLink && ((ImgurAlbumLink) link).hasAlbumTitle())
-        albumTitle = ((ImgurAlbumLink) link).albumTitle();
-
-      return streamLoadMediaAlbum(context, ((MediaAlbumLink<?>) link), Optional.ofNullable(albumTitle),
-          windowBackgroundColor, redditSuppliedThumbnails);
+      return streamLoadMediaAlbum(context, (MediaAlbumLink<?>) link, windowBackgroundColor, redditSuppliedThumbnails);
     } else {
       throw new AssertionError("Unknown link: " + link);
     }
@@ -303,10 +298,10 @@ public class SubmissionContentLinkUiConstructor {
   public Observable<SubmissionContentLinkUiModel> streamLoadMediaAlbum(
       Context context,
       MediaAlbumLink<?> albumLink,
-      Optional<String> albumTitle,
       int windowBackgroundColor,
       ImageWithMultipleVariants redditSuppliedThumbnails)
   {
+    Optional<String> albumTitle = Optional.ofNullable(albumLink.albumTitle());
     Observable<String> iconContentDescriptionStream = Observable.just(context.getString(R.string.submission_link_imgur_gallery));
 
     //noinspection ConstantConditions

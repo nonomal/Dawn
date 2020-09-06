@@ -58,6 +58,7 @@ data class RedditGalleryLink(
 
   override fun unparsedUrl(): String = galleryUrl
   override fun cacheKey(): String = cacheKeyWithClassName(galleryUrl)
+  override fun albumTitle(): String? = null
   override fun coverImageUrl(): String = imageList[0].let { it.lowQualityUrl ?: it.highQualityUrl() }
   override fun images(): List<RedditGalleryImageLink> = imageList
 }

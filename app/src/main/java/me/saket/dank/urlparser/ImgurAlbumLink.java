@@ -23,12 +23,8 @@ public abstract class ImgurAlbumLink extends MediaAlbumLink<ImgurLink> implement
   public abstract String albumUrl();
 
   @Nullable
+  @Override
   public abstract String albumTitle();
-
-  public boolean hasAlbumTitle() {
-    //noinspection ConstantConditions
-    return albumTitle() != null && !albumTitle().isEmpty();
-  }
 
   @Override
   public abstract String coverImageUrl();

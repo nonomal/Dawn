@@ -6,6 +6,7 @@ abstract class MediaAlbumLink<out L: MediaLink>: MediaLink() {
   override fun highQualityUrl(): String = throw UnsupportedOperationException()
   override fun lowQualityUrl(): String = throw UnsupportedOperationException()
 
+  abstract fun albumTitle(): String?
   abstract fun coverImageUrl(): String?
   abstract fun images(): List<L>?
 }
