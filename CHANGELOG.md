@@ -6,12 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+
+-   Support for reddit galleries ([#312](https://github.com/Tunous/Dawn/pull/312))
+
 ## [0.10.0] - 2020-08-14
 
 ### Added
 
 -   Full height images style ([#207](https://github.com/Tunous/Dawn/pull/207))
--   Support for reddit galleries ([#312](https://github.com/Tunous/Dawn/pull/312))
 
 ### Changed
 
