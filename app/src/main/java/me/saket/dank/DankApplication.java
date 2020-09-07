@@ -51,7 +51,7 @@ public class DankApplication extends Application {
       Timber.plant(Dank.dependencyInjector().crashReporter().timberTree());
     }
 
-    new AppUpdateActions(this).handleUpdate();
+    AppUpdateActions.handleDataUpdateIfNeeded(this);
 
     if (BuildConfig.DEBUG) {
       if (!isRoboUnitTest()) {
