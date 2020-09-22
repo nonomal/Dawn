@@ -260,9 +260,20 @@ public class SubredditUiConstructor {
     int postedAndPendingCommentCount = submission.getCommentCount() + pendingSyncReplyCount;
 
     Truss titleBuilder = new Truss();
-    titleBuilder.pushSpan(new ForegroundColorSpan(ContextCompat.getColor(c, Themes.voteColor(voteDirection))));
+    int voteColor = ContextCompat.getColor(c, Themes.voteColor(voteDirection));
+    int titleLineSpacingExtra = c.getResources().getDimensionPixelSize(R.dimen.submission_title_extra_spacing);
+
+    titleBuilder.pushSpan(new ForegroundColorSpan(voteColor));
     titleBuilder.append(Strings.abbreviateScore(submissionScore));
     titleBuilder.popSpan();
+
+    ColorReplicationIcons.pushVoteIcon(c,
+        titleBuilder,
+        voteDirection,
+        voteColor,
+        R.dimen.subreddit_submission_title,
+        titleLineSpacingExtra);
+
     titleBuilder.append("  ");
     //noinspection deprecation
     titleBuilder.append(Html.fromHtml(submission.getTitle()));

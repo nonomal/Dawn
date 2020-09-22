@@ -8,6 +8,7 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.core.content.ContextCompat;
 
+import me.saket.dank.utils.*;
 import net.dean.jraw.models.Comment;
 import net.dean.jraw.models.Identifiable;
 import net.dean.jraw.models.MoreChildren;
@@ -39,16 +40,7 @@ import me.saket.dank.ui.submission.adapter.SubmissionLocalComment;
 import me.saket.dank.ui.submission.adapter.SubmissionRemoteComment;
 import me.saket.dank.ui.submission.adapter.SubmissionScreenUiModel;
 import me.saket.dank.ui.user.UserSessionRepository;
-import me.saket.dank.utils.CombineLatestWithLog;
 import me.saket.dank.utils.CombineLatestWithLog.O;
-import me.saket.dank.utils.DankSubmissionRequest;
-import me.saket.dank.utils.Dates;
-import me.saket.dank.utils.JrawUtils2;
-import me.saket.dank.utils.Optional;
-import me.saket.dank.utils.RxHashSet;
-import me.saket.dank.utils.Strings;
-import me.saket.dank.utils.Themes;
-import me.saket.dank.utils.Truss;
 import me.saket.dank.utils.markdown.Markdown;
 import me.saket.dank.vote.VotingManager;
 import timber.log.Timber;
@@ -616,6 +608,7 @@ public class SubmissionCommentTreeUiConstructor {
       boolean isCollapsed)
   {
     Truss bylineBuilder = new Truss();
+    int voteColor = color(context, Themes.voteColor(voteDirection));
     if (isCollapsed) {
       bylineBuilder.append(author);
       bylineBuilder.append(context.getString(R.string.submission_comment_byline_item_separator));
@@ -625,6 +618,10 @@ public class SubmissionCommentTreeUiConstructor {
       bylineBuilder.append(String.format(hiddenCommentsString, hiddenCommentsCount));
 
     } else {
+      if (isAuthorOP) {
+        ColorReplicationIcons.pushOPCommentIcon(context, bylineBuilder);
+      }
+
       bylineBuilder.pushSpan(new ForegroundColorSpan(color(context, isAuthorOP
           ? R.color.submission_comment_byline_author_op
           : R.color.submission_comment_byline_author)
@@ -633,7 +630,7 @@ public class SubmissionCommentTreeUiConstructor {
       bylineBuilder.popSpan();
 
       bylineBuilder.append(context.getString(R.string.submission_comment_byline_item_separator));
-      bylineBuilder.pushSpan(new ForegroundColorSpan(color(context, Themes.voteColor(voteDirection))));
+      bylineBuilder.pushSpan(new ForegroundColorSpan(voteColor));
       String scoreText = optionalCommentScore
           .map(score -> context.getResources().getQuantityString(
               R.plurals.submission_comment_byline_item_score,
@@ -642,6 +639,8 @@ public class SubmissionCommentTreeUiConstructor {
           .orElse(context.getString(R.string.submission_comment_byline_score_hidden));
       bylineBuilder.append(scoreText);
       bylineBuilder.popSpan();
+
+      ColorReplicationIcons.pushVoteIcon(context, bylineBuilder, voteDirection, voteColor, R.dimen.submission_comment_byline, 0);
 
       optionalAuthorFlairText.ifPresent(flair -> {
         bylineBuilder.append(context.getString(R.string.submission_comment_byline_item_separator));
