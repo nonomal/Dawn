@@ -56,7 +56,7 @@ import me.saket.dank.reddit.Reddit;
 import me.saket.dank.ui.DankPullCollapsibleActivity;
 import me.saket.dank.ui.UiEvent;
 import me.saket.dank.ui.UrlRouter;
-import me.saket.dank.ui.authentication.LoginActivity;
+import me.saket.dank.ui.accountmanager.AccountManagerActivity;
 import me.saket.dank.ui.compose.InsertGifDialog;
 import me.saket.dank.ui.giphy.GiphyGif;
 import me.saket.dank.ui.preferences.UserPreferencesActivity;
@@ -721,7 +721,7 @@ public class SubredditActivity extends DankPullCollapsibleActivity
         if (userSessionRepository.get().isUserLoggedIn()) {
           showUserProfileSheet();
         } else {
-          startActivity(LoginActivity.intent(this));
+          startActivity(AccountManagerActivity.intent(this));
         }
         return true;
 
@@ -838,10 +838,6 @@ public class SubredditActivity extends DankPullCollapsibleActivity
         .take(1)
         .filter(subscriptionRepository::isFrontpage)
         .subscribe(o -> forceRefreshSubmissionsRequestStream.accept(Notification.INSTANCE));
-
-    if (!submissionPage.isExpanded()) {
-      showUserProfileSheet();
-    }
   }
 
   private void handleOnUserLogOut() {
