@@ -2,12 +2,12 @@ package me.saket.dank.markdownhints.spans;
 
 import androidx.annotation.NonNull;
 
-import ru.noties.markwon.spans.CodeSpan;
-import ru.noties.markwon.spans.SpannableTheme;
+import io.noties.markwon.core.MarkwonTheme;
+import io.noties.markwon.core.spans.CodeSpan;
 
 public class InlineCodeSpan extends CodeSpan {
 
-  public InlineCodeSpan(@NonNull SpannableTheme theme) {
-    super(theme, false);
+  public InlineCodeSpan(@NonNull MarkwonTheme theme) {
+    super(theme);
   }
 }

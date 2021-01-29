@@ -14,13 +14,18 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.noties.markwon.Markwon;
+import io.noties.markwon.core.MarkwonTheme;
+import io.noties.markwon.ext.strikethrough.StrikethroughPlugin;
+import io.noties.markwon.ext.tables.TablePlugin;
+import io.noties.markwon.ext.tables.TableTheme;
+import io.noties.markwon.ext.tasklist.TaskListPlugin;
 import me.saket.dank.R;
 import me.saket.dank.markdownhints.MarkdownHintOptions;
 import me.saket.dank.markdownhints.MarkdownSpanPool;
 import me.saket.dank.utils.SafeFunction;
 import me.saket.dank.utils.markdown.markwon.MarkwonBasedMarkdownRenderer;
-import ru.noties.markwon.SpannableConfiguration;
-import ru.noties.markwon.spans.SpannableTheme;
+import me.saket.dank.utils.markdown.markwon.MarkwonThemePlugin;
 
 @Module
 public class MarkdownModule {
@@ -28,6 +33,22 @@ public class MarkdownModule {
   @Provides
   Markdown markdown(MarkwonBasedMarkdownRenderer renderer) {
     return renderer;
+  }
+
+  @Provides
+  Markwon markwon(
+      Application appContext,
+      MarkwonThemePlugin themePlugin,
+      StrikethroughPlugin strikethroughPlugin,
+      TablePlugin tablePlugin,
+      TaskListPlugin taskListPlugin
+  ) {
+    return Markwon.builder(appContext)
+        .usePlugin(strikethroughPlugin)
+        .usePlugin(tablePlugin)
+        .usePlugin(taskListPlugin)
+        .usePlugin(themePlugin)
+        .build();
   }
 
   @Provides
@@ -69,27 +90,29 @@ public class MarkdownModule {
   }
 
   @Provides
-  static SpannableConfiguration spannableConfiguration(Application appContext, MarkdownHintOptions options) {
-    return SpannableConfiguration.builder(appContext)
-        .theme(markdownSpansTheme(appContext, options))
-        .build();
+  static MarkdownSpanPool markdownSpanPool(MarkwonTheme theme) {
+    return new MarkdownSpanPool(theme);
   }
 
   @Provides
-  static SpannableTheme markdownSpansTheme(Application appContext, MarkdownHintOptions options) {
-    return SpannableTheme.builderWithDefaults(appContext)
-        .headingBreakHeight(0)
-        .blockQuoteColor(options.blockQuoteIndentationRuleColor())
-        .blockQuoteWidth(options.blockQuoteVerticalRuleStrokeWidth())
-        .blockMargin(options.listBlockIndentationMargin())
-        .codeBackgroundColor(options.inlineCodeBackgroundColor())
+  static TableTheme markdownTableTheme(Application appContext, MarkdownHintOptions options) {
+    return TableTheme.buildWithDefaults(appContext)
         .tableBorderColor(options.tableBorderColor())
         .build();
   }
 
   @Provides
-  @Singleton
-  static MarkdownSpanPool provideMarkdownSpanPool(SpannableTheme spannableTheme) {
-    return new MarkdownSpanPool(spannableTheme);
+  static TablePlugin markdownTablePlugin(TableTheme theme) {
+    return TablePlugin.create(theme);
+  }
+
+  @Provides
+  static TaskListPlugin taskListPlugin(Application appContext) {
+    return TaskListPlugin.create(appContext);
+  }
+
+  @Provides
+  static StrikethroughPlugin strikethroughPlugin() {
+    return StrikethroughPlugin.create();
   }
 }

@@ -23,7 +23,7 @@ import me.saket.dank.markdownhints.spans.HeadingSpanWithLevel;
 import me.saket.dank.markdownhints.spans.HorizontalRuleSpan;
 import me.saket.dank.markdownhints.spans.IndentedCodeBlockSpan;
 import me.saket.dank.markdownhints.spans.InlineCodeSpan;
-import ru.noties.markwon.spans.BlockQuoteSpan;
+import io.noties.markwon.core.spans.BlockQuoteSpan;
 import timber.log.Timber;
 
 /**

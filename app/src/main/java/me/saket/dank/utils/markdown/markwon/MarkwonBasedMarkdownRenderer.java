@@ -10,14 +10,6 @@ import net.dean.jraw.models.Comment;
 import net.dean.jraw.models.Message;
 import net.dean.jraw.models.Submission;
 
-import org.commonmark.ext.autolink.AutolinkExtension;
-import org.commonmark.ext.gfm.strikethrough.StrikethroughExtension;
-import org.commonmark.ext.gfm.tables.TablesExtension;
-import org.commonmark.node.Node;
-import org.commonmark.node.Visitor;
-import org.commonmark.parser.Parser;
-
-import java.util.Arrays;
 import java.util.Stack;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
@@ -26,15 +18,13 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.noties.markwon.Markwon;
 import io.reactivex.exceptions.Exceptions;
 import me.saket.dank.BuildConfig;
-import me.saket.dank.markdownhints.MarkdownHintOptions;
 import me.saket.dank.reply.PendingSyncReply;
 import me.saket.dank.utils.Preconditions;
 import me.saket.dank.utils.markdown.Markdown;
-import ru.noties.markwon.SpannableBuilder;
-import ru.noties.markwon.SpannableConfiguration;
-import ru.noties.markwon.tasklist.TaskListExtension;
+import io.noties.markwon.SpannableBuilder;
 import timber.log.Timber;
 
 public class MarkwonBasedMarkdownRenderer implements Markdown {
@@ -44,33 +34,16 @@ public class MarkwonBasedMarkdownRenderer implements Markdown {
   private static final Pattern HEADING_WITHOUT_SPACE_MARKDOWN_PATTERN = Pattern.compile("(#{1,6})\\s{0}((?:(?!\\\\n).)*)");
   private static final Pattern POTENTIALLY_INVALID_SPOILER_MARKDOWN_PATTERN = Pattern.compile("\\[([^]]*)]\\((.*?)\"+(.*?(?<!\\\\))\"+\\)");
 
-  private final MarkdownHintOptions markdownOptions;
   private final Cache<String, CharSequence> cache;
-  private final Parser parser;
-  private final SpannableConfiguration configuration;
+  private final Markwon markwon;
 
   @Inject
   public MarkwonBasedMarkdownRenderer(
-      SpannableConfiguration configuration,
-      AutoRedditLinkExtension autoRedditLinkExtension,
-      EmptyListItemHandlerExtension emptyListItemHandlerExtension,
-      MarkdownHintOptions markdownOptions,
+      Markwon markwon,
       @Named("markwon_spans_renderer") Cache<String, CharSequence> cache)
   {
-    this.markdownOptions = markdownOptions;
     this.cache = cache;
-    this.configuration = configuration;
-
-    this.parser = new Parser.Builder()
-        .extensions(Arrays.asList(
-            StrikethroughExtension.create(),
-            TablesExtension.create(),
-            TaskListExtension.create(),
-            AutolinkExtension.create(),
-            emptyListItemHandlerExtension,
-            autoRedditLinkExtension
-        ))
-        .build();
+    this.markwon = markwon;
   }
 
   // TODO: it's important to call these typo-fixing methods in correct order.
@@ -88,11 +61,7 @@ public class MarkwonBasedMarkdownRenderer implements Markdown {
     markdown = new SuperscriptMarkdownToHtml().convert(markdown);
 
     // It's better **not** to re-use the visitor between multiple calls.
-    SpannableBuilder builder = new SpannableBuilder();
-    Visitor visitor = new RedditSpoilerLinkVisitor(configuration, markdownOptions, builder);
-
-    Node node = parser.parse(markdown);
-    node.accept(visitor);
+    SpannableBuilder builder = new SpannableBuilder(markwon.render(markwon.parse(markdown)));
     return (SpannableStringBuilder) builder.text();
   }
 

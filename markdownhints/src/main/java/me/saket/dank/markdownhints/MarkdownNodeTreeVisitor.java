@@ -24,7 +24,7 @@ import com.vladsch.flexmark.util.sequence.BasedSequence;
 import com.vladsch.flexmark.util.sequence.SubSequence;
 
 import me.saket.dank.markdownhints.spans.HorizontalRuleSpan;
-import ru.noties.markwon.spans.BlockQuoteSpan;
+import io.noties.markwon.core.spans.BlockQuoteSpan;
 import timber.log.Timber;
 
 /**

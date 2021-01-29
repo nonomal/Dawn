@@ -8,9 +8,9 @@ import org.commonmark.node.Text;
 import java.util.Locale;
 
 import me.saket.dank.markdownhints.MarkdownHintOptions;
-import ru.noties.markwon.SpannableBuilder;
-import ru.noties.markwon.SpannableConfiguration;
-import ru.noties.markwon.renderer.SpannableMarkdownVisitor;
+import io.noties.markwon.SpannableBuilder;
+import io.noties.markwon.SpannableConfiguration;
+import io.noties.markwon.renderer.SpannableMarkdownVisitor;
 
 class RedditSpoilerLinkVisitor extends SpannableMarkdownVisitor {
 

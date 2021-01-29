@@ -5,7 +5,7 @@ import android.util.AttributeSet;
 
 import androidx.appcompat.widget.AppCompatTextView;
 
-import ru.noties.markwon.Markwon;
+import io.noties.markwon.Markwon;
 
 public class MarkdownTextView extends AppCompatTextView {
 

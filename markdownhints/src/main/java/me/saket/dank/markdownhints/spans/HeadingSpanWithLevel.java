@@ -1,14 +1,13 @@
 package me.saket.dank.markdownhints.spans;
 
-import androidx.annotation.NonNull;
+import io.noties.markwon.core.MarkwonTheme;
+import io.noties.markwon.core.spans.HeadingSpan;
 
-import ru.noties.markwon.spans.SpannableTheme;
-
-public class HeadingSpanWithLevel extends ru.noties.markwon.spans.HeadingSpan {
+public class HeadingSpanWithLevel extends HeadingSpan {
 
   private final int level;
 
-  public HeadingSpanWithLevel(@NonNull SpannableTheme theme, int level) {
+  public HeadingSpanWithLevel(MarkwonTheme theme, int level) {
     super(theme, level);
     this.level = level;
   }

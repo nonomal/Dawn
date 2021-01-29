@@ -16,12 +16,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+import io.noties.markwon.core.MarkwonTheme;
 import me.saket.dank.markdownhints.spans.HeadingSpanWithLevel;
 import me.saket.dank.markdownhints.spans.HorizontalRuleSpan;
 import me.saket.dank.markdownhints.spans.IndentedCodeBlockSpan;
 import me.saket.dank.markdownhints.spans.InlineCodeSpan;
-import ru.noties.markwon.spans.BlockQuoteSpan;
-import ru.noties.markwon.spans.SpannableTheme;
+import io.noties.markwon.core.spans.BlockQuoteSpan;
 
 /**
  * For avoiding creation of new spans on every text change.
@@ -42,10 +42,10 @@ public class MarkdownSpanPool {
   private final Map<Integer, LeadingMarginSpan.Standard> leadingMarginSpans = new HashMap<>();
   private final Map<String, HorizontalRuleSpan> horizontalRuleSpans = new HashMap<>();
 
-  private final SpannableTheme spannableTheme;
+  private final MarkwonTheme theme;
 
-  public MarkdownSpanPool(SpannableTheme spannableTheme) {
-    this.spannableTheme = spannableTheme;
+  public MarkdownSpanPool(MarkwonTheme theme) {
+    this.theme = theme;
   }
 
   public StyleSpan italics() {
@@ -66,13 +66,13 @@ public class MarkdownSpanPool {
 
   public InlineCodeSpan inlineCode() {
     return inlineCodeSpans.empty()
-        ? new InlineCodeSpan(spannableTheme)
+        ? new InlineCodeSpan(theme)
         : inlineCodeSpans.pop();
   }
 
   public IndentedCodeBlockSpan indentedCodeBlock() {
     return indentedCodeSpans.empty()
-        ? new IndentedCodeBlockSpan(spannableTheme)
+        ? new IndentedCodeBlockSpan(theme)
         : indentedCodeSpans.pop();
   }
 
@@ -91,7 +91,7 @@ public class MarkdownSpanPool {
   public HeadingSpanWithLevel heading(int level) {
     return headingSpans.containsKey(level)
         ? headingSpans.remove(level)
-        : new HeadingSpanWithLevel(spannableTheme, level);
+        : new HeadingSpanWithLevel(theme, level);
   }
 
   public SuperscriptSpan superscript() {
@@ -102,7 +102,7 @@ public class MarkdownSpanPool {
 
   public BlockQuoteSpan quote() {
     return quoteSpans.empty()
-        ? new BlockQuoteSpan(spannableTheme)
+        ? new BlockQuoteSpan(theme)
         : quoteSpans.pop();
   }
 

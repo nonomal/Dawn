@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import me.saket.dank.markdownhints.MarkdownHintOptions;
-import ru.noties.markwon.SpannableConfiguration;
+import io.noties.markwon.SpannableConfiguration;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
