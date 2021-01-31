@@ -1,0 +1,7 @@
+0.12.1 - 2021-01-29
+
+Fixed
+Fix Gfycat
+Fix post title selection after vote
+Keep text in comment reply on screen rotation
+Fix link previews

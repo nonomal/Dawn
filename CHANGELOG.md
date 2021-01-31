@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [0.12.2] - 2021-01-31
+
+### Changed
+
+-   Increased target API version to 30 ([#390](https://github.com/Tunous/Dawn/pull/390))
+
 ## [0.12.1] - 2021-01-29
 
 ### Fixed
@@ -177,7 +183,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Changes before the fork has been made.
 
-[Unreleased]: https://github.com/Tunous/Dawn/compare/0.12.1...HEAD
+[Unreleased]: https://github.com/Tunous/Dawn/compare/0.12.2...HEAD
+
+[0.12.2]: https://github.com/Tunous/Dawn/compare/0.12.1...0.12.2
 
 [0.12.1]: https://github.com/Tunous/Dawn/compare/0.12.0...0.12.1
 
