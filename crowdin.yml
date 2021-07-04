@@ -1,3 +1,4 @@
+commit_message: "[skip ci]"
 files:
   - source: /app/src/main/res/values/strings.xml
     translation: /app/src/main/res/values-%android_code%/%original_file_name%
@@ -5,5 +6,3 @@ files:
     translation: /app/src/main/res/values-%android_code%/%original_file_name%
   - source: /app/src/main/res/values/compose.xml
     translation: /app/src/main/res/values-%android_code%/%original_file_name%
-
-commit_message: [ci skip]
