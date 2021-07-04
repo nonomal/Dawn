@@ -6,9 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+
+-   Esperanto translation ([#469](https://github.com/Tunous/Dawn/pull/469)) - [@jakubfabijan](https://github.com/jakubfabijan)
+
 ### Changed
 
--   Limited images cache to 200 MB ([#381](https://github.com/Tunous/Dawn/pull/381))
+-   Limited images cache to 200 MB ([#381](https://github.com/Tunous/Dawn/pull/381)) - [@msfjarvis](https://github.com/msfjarvis)
 
 ## [0.12.2] - 2021-01-31
 
