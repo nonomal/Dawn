@@ -19,6 +19,9 @@
     <a href='https://f-droid.org/en/packages/me.thanel.dank'>
         <img alt="F-Droid Release" src="https://img.shields.io/f-droid/v/me.thanel.dank.svg?logo=f-droid"/>
     </a>
+    <a title="Crowdin" href="https://crowdin.com/project/dawn-for-reddit">
+        <img src="https://badges.crowdin.net/dawn-for-reddit/localized.svg">
+    </a>
 </p>
 
 ### Here lives the greatest open-source Reddit app
