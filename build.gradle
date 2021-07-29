@@ -35,7 +35,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:4.2.2' // See ndkVersion in build.gradle (:app) when updating
+    classpath 'com.android.tools.build:gradle:7.0.0' // See ndkVersion in build.gradle (:app) when updating
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
   }
 }
@@ -49,9 +49,8 @@ allprojects {
 }
 
 tasks.wrapper {
-  distributionType = DistributionType.ALL
-  gradleVersion = "6.8.1"
-  distributionSha256Sum = "3db89524a3981819ff28c3f979236c1274a726e146ced0c8a2020417f9bc0782"
+  gradleVersion = "7.1.1"
+  distributionSha256Sum = "bf8b869948901d422e9bb7d1fa61da6a6e19411baa7ad6ee929073df85d6365d"
 }
 
 task clean(type: Delete) {
