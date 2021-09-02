@@ -102,7 +102,12 @@ public class WelcomeToDankView extends FrameLayout {
 
       return Observable.range(0, text.length())
           .zipWith(Observable.interval(ANIM_DURATION_PER_LETTER, TimeUnit.MILLISECONDS, mainThread()), (revealDistance, o) -> revealDistance)
-          .flatMapCompletable(revealLength -> Completable.fromAction(() -> setText(text.substring(0, revealLength + 1))));
+          .flatMapCompletable(revealLength -> Completable.fromAction(() -> {
+            setText(text.substring(0, revealLength + 1));
+            setGravity(Gravity.CENTER_VERTICAL);
+            setAutoSizeTextTypeWithDefaults(AppCompatTextView.AUTO_SIZE_TEXT_TYPE_UNIFORM);
+            setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
+          }));
     }
   }
 }
