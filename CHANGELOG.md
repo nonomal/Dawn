@@ -14,6 +14,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 -   Limited images cache to 200 MB ([#381](https://github.com/Tunous/Dawn/pull/381)) - [@msfjarvis](https://github.com/msfjarvis)
 
+### Fixed
+
+-   Text sizing for onboarding flow ([#505](https://github.com/Tunous/Dawn/pull/505)) - [@yuhuitech](https://github.com/yuhuitech)
+
 ## [0.12.2] - 2021-01-31
 
 ### Changed
