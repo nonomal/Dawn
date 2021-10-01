@@ -24,7 +24,7 @@ buildscript {
       androidTest     : '1.0.2',
       kotlin          : '1.5.31',
       room            : '2.3.0',
-      jsoup           : '1.14.2',
+      jsoup           : '1.14.3',
       rxjava          : '2.2.21',
       markwon         : '2.0.2',
   ]
