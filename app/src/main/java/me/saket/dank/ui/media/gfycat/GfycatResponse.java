@@ -24,7 +24,7 @@ public abstract class GfycatResponse {
   @AutoValue
   public abstract static class Data {
 
-    @Json(name = "gfyName")
+    @Json(name = "gfyId")
     public abstract String threeWordId();
 
     @Json(name = "mp4Url")
