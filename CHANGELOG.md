@@ -6,9 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [0.12.3] - 2021-11-20
+
 ### Added
 
 -   Esperanto translation ([#469](https://github.com/Tunous/Dawn/pull/469)) - [@jakubfabijan](https://github.com/jakubfabijan)
+-   Polish translation
 
 ### Changed
 
@@ -17,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 -   Text sizing for onboarding flow ([#505](https://github.com/Tunous/Dawn/pull/505)) - [@yuhuitech](https://github.com/yuhuitech)
+-   Gfycat integration ([#519](https://github.com/Tunous/Dawn/pull/519)) - [@msfjarvis](https://github.com/msfjarvis)
 
 ## [0.12.2] - 2021-01-31
 
@@ -195,7 +199,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Changes before the fork has been made.
 
-[Unreleased]: https://github.com/Tunous/Dawn/compare/0.12.2...HEAD
+[Unreleased]: https://github.com/Tunous/Dawn/compare/0.12.3...HEAD
+
+[0.12.3]: https://github.com/Tunous/Dawn/compare/0.12.2...0.12.3
 
 [0.12.2]: https://github.com/Tunous/Dawn/compare/0.12.1...0.12.2
 

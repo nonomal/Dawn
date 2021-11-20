@@ -1,0 +1,15 @@
+0.12.3 - 2021-11-20
+
+Added
+
+- Esperanto translation
+- Polish translation
+
+Changed
+
+- Limited images cache to 200 MB
+
+Fixed
+
+- Text sizing for onboarding flow
+- Gfycat integration
