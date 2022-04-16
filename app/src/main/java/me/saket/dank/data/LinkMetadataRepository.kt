@@ -13,7 +13,6 @@ import me.saket.dank.BuildConfig
 import me.saket.dank.cache.DiskLruCachePathResolver
 import me.saket.dank.cache.MoshiStoreJsonParser
 import me.saket.dank.cache.StoreFilePersister
-import me.saket.dank.di.DankApi
 import me.saket.dank.urlparser.Link
 import me.saket.dank.utils.Urls
 import me.thanel.dawn.linkunfurler.LinkMetadata
@@ -64,30 +63,6 @@ class LinkMetadataRepository @Inject constructor(
     val ignoreSocialMetadata = link.isRedditPage()
     return linkUnfurler.unfurl(link.unparsedUrl(), ignoreSocialMetadata)
       .map { it.getOrThrow() }
-  }
-
-  @Deprecated("Replaced by on-device unfurling")
-  private fun unfurlLinkFromRemote(
-    dankApi: DankApi,
-    link: Link
-  ): Single<LinkMetadata> {
-    // Reddit uses different title for sharing to social media, which we don't want.
-    val ignoreSocialMetadata = link.isRedditPage()
-    return dankApi.unfurlUrl(link.unparsedUrl(), ignoreSocialMetadata)
-      .map { response ->
-        val error = response.error()
-        if (error != null) {
-          throw RuntimeException(error.message())
-        }
-
-        val linkMetadata = response.data()!!.linkMetadata()
-        return@map LinkMetadata(
-          linkMetadata.url(),
-          linkMetadata.title(),
-          linkMetadata.faviconUrl(),
-          linkMetadata.imageUrl()
-        )
-      }
   }
 
   init {

@@ -1,6 +1,7 @@
 package me.saket.dank.ui.media;
 
 import androidx.annotation.CheckResult;
+import androidx.annotation.NonNull;
 
 import com.nytimes.android.external.fs3.filesystem.FileSystem;
 import com.nytimes.android.external.store3.base.impl.MemoryPolicy;
@@ -77,7 +78,7 @@ public class MediaHostRepository {
     };
 
     cacheStore = StoreBuilder.<MediaLink, MediaLink>key()
-        .fetcher(unresolvedMediaLink -> resolveFromRemote(unresolvedMediaLink))
+        .fetcher(this::resolveFromRemote)
         .memoryPolicy(MemoryPolicy.builder()
             .setMemorySize(100)
             .setExpireAfterWrite(24)
@@ -88,7 +89,7 @@ public class MediaHostRepository {
   }
 
   static class MediaLinkStoreJsonParser implements StoreFilePersister.JsonParser<MediaLink> {
-    private Moshi moshi;
+    private final Moshi moshi;
 
     public MediaLinkStoreJsonParser(Moshi moshi) {
       this.moshi = moshi;
@@ -155,6 +156,7 @@ public class MediaHostRepository {
   }
 
   // NOTE: If you see any "MaybeSource is empty" error, it means that the data couldn't be saved or read from cache store.
+  @NonNull
   private Single<MediaLink> resolveFromRemote(MediaLink unresolvedLink) {
     if (unresolvedLink instanceof StreamableUnresolvedLink) {
       return streamableRepository
@@ -181,18 +183,18 @@ public class MediaHostRepository {
       // Reparse url with fallback mechanisms enabled
       ImgurLink link = (ImgurLink) unresolvedLink;
       return Single.just(
-          (MediaLink) urlParser.get()
+          urlParser.get()
               .createImgurLink(link.unparsedUrl(), link.title(), link.description(), true)
       );
 
     } else if (unresolvedLink instanceof GfycatUnresolvedLink) {
       return gfycatRepository.get()
-          .gifGfycatOrRedgifs(((GfycatUnresolvedLink) unresolvedLink).threeWordId())
+          .gifGfycat(((GfycatUnresolvedLink) unresolvedLink).threeWordId())
           .cast(MediaLink.class);
 
     } else if (unresolvedLink instanceof GfycatLink) {
       return gfycatRepository.get()
-          .gifGfycatOrRedgifs(((GfycatLink) unresolvedLink).threeWordId())
+          .gifGfycat(((GfycatLink) unresolvedLink).threeWordId())
           .cast(MediaLink.class);
 
     } else if (unresolvedLink instanceof RedgifsUnresolvedLink) {

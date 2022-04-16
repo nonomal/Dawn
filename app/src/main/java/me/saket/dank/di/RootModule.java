@@ -41,7 +41,6 @@ import me.saket.dank.urlparser.Link;
 import me.saket.dank.urlparser.RedditUserLink;
 import me.saket.dank.urlparser.UrlParser;
 import me.saket.dank.utils.DankLinkMovementMethod;
-import me.saket.dank.utils.OkHttpWholesomeAuthIntercepter;
 import me.thanel.dawn.linkunfurler.LinkMetadataReader;
 import me.thanel.dawn.linkunfurler.LinkUnfurler;
 import me.thanel.dawn.linkunfurler.readers.GenericLinkMetadataReader;
@@ -105,7 +104,6 @@ public class RootModule {
       builder.addInterceptor(logging);
       builder.addNetworkInterceptor(new StethoInterceptor());
     }
-    builder.addNetworkInterceptor(new OkHttpWholesomeAuthIntercepter());
 
     return builder.build();
   }

@@ -14,6 +14,8 @@ import retrofit2.HttpException;
 
 import static java.lang.System.currentTimeMillis;
 
+import androidx.annotation.VisibleForTesting;
+
 public class GfycatRepository {
 
   private final Lazy<DankApi> dankApi;
@@ -24,39 +26,33 @@ public class GfycatRepository {
   public GfycatRepository(
       Lazy<DankApi> dankApi,
       Lazy<UrlParserConfig> urlParserConfig,
-      Lazy<GfycatRepositoryData> data)
-  {
+      Lazy<GfycatRepositoryData> data) {
     this.dankApi = dankApi;
     this.urlParserConfig = urlParserConfig;
     this.data = data;
   }
 
-  public Single<GfycatLink> gifGfycatOrRedgifs(String threeWordId) {
-    return gifGfycat(threeWordId)
-        .onErrorResumeNext(error -> {
-          if (error instanceof HttpException && ((HttpException) error).code() == 404) {
-            // try to resolve with redgifs api in case this is a gfycat-to-redgifs redirect link
-            return gifRedgifs(threeWordId);
-          } else {
-            return Single.error(error);
-          }
-        });
+  public Single<GfycatLink> gifRedgifs(String threeWordId) {
+    return redgifs(threeWordId);
   }
 
   public Single<GfycatLink> gifGfycat(String threeWordId) {
-    return gif(DankApi.GFYCAT_API_DOMAIN, threeWordId);
+    return gfycat(threeWordId);
   }
 
-  // Gfycat and Redgifs is, essentially, the same platform and share same api
-  public Single<GfycatLink> gifRedgifs(String threeWordId) {
-    return gif(DankApi.REDGIFS_API_DOMAIN, threeWordId);
+  private Single<GfycatLink> gfycat(String threeWordId) {
+    return dankApi.get().gfycat_no_auth(threeWordId).map(response -> {
+      String unparsedUrl = urlParserConfig.get().gfycatUnparsedUrlPlaceholder(response.data().threeWordId());
+      return GfycatLink.create(unparsedUrl, response.data().threeWordId(), response.data().urls().highQualityUrl().url(), response.data().urls().lowQualityUrl().url());
+    });
   }
 
-  public Single<GfycatLink> gif(String domain, String threeWordId) {
+  @VisibleForTesting
+  public Single<GfycatLink> redgifs(String threeWordId) {
     return Single.fromCallable(() -> data.get().isAccessTokenRequired())
         .flatMap(headerRequired -> headerRequired
-            ? authToken().flatMap(authHeader -> dankApi.get().gfycat_with_auth(domain, authHeader, threeWordId))
-            : dankApi.get().gfycat_no_auth(domain, threeWordId))
+            ? authToken().flatMap(authHeader -> dankApi.get().redgifs_with_auth(authHeader, threeWordId))
+            : dankApi.get().redgifs_no_auth(threeWordId))
         .retry(error -> {
           // At the time of writing this, Gfycat allows API calls without auth headers.
           // I'm going to wing it to reduce API calls until Gfycat finds out and makes
@@ -70,7 +66,7 @@ public class GfycatRepository {
         })
         .map(response -> {
           String unparsedUrl = urlParserConfig.get().gfycatUnparsedUrlPlaceholder(response.data().threeWordId());
-          return GfycatLink.create(unparsedUrl, response.data().threeWordId(), response.data().highQualityUrl(), response.data().lowQualityUrl());
+          return GfycatLink.create(unparsedUrl, response.data().threeWordId(), response.data().urls().highQualityUrl(), response.data().urls().lowQualityUrl());
         });
   }
 
@@ -83,7 +79,7 @@ public class GfycatRepository {
         .flatMapCompletable(hasTokenExpired -> {
           if (hasTokenExpired) {
             return dankApi.get()
-                .gfycatOAuth("2_K1VUup", "vk8KwIPVFNa2eRWr7JbPfACeG0LPAVw2nHZ-cWc19te7RaMr0X_UrSKXOYHClctA")
+                .redgifsOAuth("2_K1VUup", "vk8KwIPVFNa2eRWr7JbPfACeG0LPAVw2nHZ-cWc19te7RaMr0X_UrSKXOYHClctA")
                 .flatMapCompletable(response -> data.get().saveOAuthResponse(response));
           } else {
             return Completable.complete();

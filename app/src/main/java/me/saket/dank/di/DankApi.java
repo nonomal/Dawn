@@ -4,13 +4,13 @@ import androidx.annotation.CheckResult;
 
 import io.reactivex.Single;
 import me.saket.dank.data.StreamableVideoResponse;
-import me.saket.dank.data.UnfurlLinkResponse;
 import me.saket.dank.ui.giphy.GiphySearchResponse;
 import me.saket.dank.ui.media.ImgurAlbumResponse;
 import me.saket.dank.ui.media.ImgurImageResponse;
 import me.saket.dank.ui.media.ImgurUploadResponse;
 import me.saket.dank.ui.media.gfycat.GfycatOauthResponse;
 import me.saket.dank.ui.media.gfycat.GfycatResponse;
+import me.saket.dank.ui.media.redgifs.RedgifsResponse;
 import okhttp3.MultipartBody;
 import retrofit2.Response;
 import retrofit2.http.GET;
@@ -25,11 +25,7 @@ import retrofit2.http.Query;
 public interface DankApi {
 
   String HEADER_IMGUR_AUTH = "Authorization: Client-ID 87450e5590435e9";
-  String HEADER_WHOLESOME_API_AUTH = "Authorization";
-  String WHOLESOME_API_HOST = "dank-wholesome.herokuapp.com";
   String GIPHY_API_KEY = "SFGHZ6SYGn3AzZ07b2tNpENCEDdYTzpB";
-  String GFYCAT_API_DOMAIN = "api.gfycat.com";
-  String REDGIFS_API_DOMAIN = "api.redgifs.com";
 
 // ======== IMGUR ======== //
 
@@ -70,15 +66,6 @@ public interface DankApi {
       @Path("videoId") String videoId
   );
 
-// ======== WHOLESOME ======== //
-
-  @CheckResult
-  @GET("https://" + WHOLESOME_API_HOST + "/unfurl")
-  Single<UnfurlLinkResponse> unfurlUrl(
-      @Query("url") String url,
-      @Query("ignoreSocialMetadata") boolean ignoreSocialMetadata
-  );
-
 // ======== GIPHY ======== //
 
   @CheckResult
@@ -98,25 +85,36 @@ public interface DankApi {
       @Query("offset") int paginationOffset
   );
 
-// ======== GFYCAT / REDGIFS ======== //
+// ======== REDGIFS ======== //
 
   @CheckResult
-  @GET("https://api.gfycat.com/v1/oauth/token?grant_type=client_credentials")
+  @GET("https://api.redgifs.com/v2/oauth/token?grant_type=client_credentials")
   @Headers({"Accept: application/json,text/html"}) // fails with 400 if text/html is not present
-  Single<GfycatOauthResponse> gfycatOAuth(
+  Single<GfycatOauthResponse> redgifsOAuth(
       @Query("client_id") String clientId,
       @Query("client_secret") String clientSecret
   );
 
-  @GET("https://{domain}/v1/gfycats/{gfyid}")
-  Single<GfycatResponse> gfycat_no_auth(
-      @Path("domain") String domain,
+  @GET("https://api.redgifs.com/v2/gifs/{gfyid}")
+  Single<RedgifsResponse> redgifs_no_auth(
       @Path("gfyid") String threeWordId
   );
 
-  @GET("https://{domain}/v1/gfycats/{gfyid}")
+  @GET("https://api.redgifs.com/v2/gifs/{gfyid}")
+  Single<RedgifsResponse> redgifs_with_auth(
+      @Header("Authorization") String authHeader,
+      @Path("gfyid") String threeWordId
+  );
+
+// ======== GFYCAT ======== //
+
+  @GET("https://api.gfycat.com/v1/gfycats/{gfyid}")
+  Single<GfycatResponse> gfycat_no_auth(
+      @Path("gfyid") String threeWordId
+  );
+
+  @GET("https://api.gfycat.com/v1/gfycats/{gfyid}")
   Single<GfycatResponse> gfycat_with_auth(
-      @Path("domain") String domain,
       @Header("Authorization") String authHeader,
       @Path("gfyid") String threeWordId
   );

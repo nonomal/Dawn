@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 import me.saket.dank.di.DankApi;
+import me.saket.dank.ui.media.redgifs.RedgifsResponse;
 import me.saket.dank.urlparser.GfycatLink;
 import me.saket.dank.urlparser.UrlParserConfig;
 import retrofit2.HttpException;
@@ -29,7 +30,7 @@ public class GfycatRepositoryTest {
   private static final String RESOLVED_ID = "ThreeWordId";
   private static final String AUTH_TOKEN = "authToken";
 
-  private static final GfycatResponse.Data GFYCAT_RESPONSE = GfycatResponse.Data.create(RESOLVED_ID, "high", "low");
+  private static final RedgifsResponse.Data REDGIFS_RESPONSE = RedgifsResponse.Data.create(RESOLVED_ID, RedgifsResponse.Urls.create("high", "low"));
   private static final GfycatLink GFYCAT_RESOLVED_LINK = GfycatLink.create(
       "https://gfycat.com/" + RESOLVED_ID,
       RESOLVED_ID,
@@ -53,10 +54,10 @@ public class GfycatRepositoryTest {
   public void when_auth_token_is_not_required() throws Exception {
     when(data.isAccessTokenRequired()).thenReturn(false);
 
-    GfycatResponse response = GfycatResponse.create(GFYCAT_RESPONSE);
-    when(dankApi.gfycat_no_auth(DankApi.GFYCAT_API_DOMAIN, UNRESOLVED_ID)).thenReturn(Single.just(response));
+    RedgifsResponse response = RedgifsResponse.create(REDGIFS_RESPONSE);
+    when(dankApi.redgifs_no_auth(UNRESOLVED_ID)).thenReturn(Single.just(response));
 
-    gfycatRepository.gifGfycat(UNRESOLVED_ID)
+    gfycatRepository.redgifs(UNRESOLVED_ID)
         .test()
         .assertNoErrors()
         .assertComplete()
@@ -70,10 +71,10 @@ public class GfycatRepositoryTest {
     when(data.tokenExpiryTimeMillis()).thenReturn(Single.just(thirtyMinutesFromNow));
     when(data.accessToken()).thenReturn(Single.just(AUTH_TOKEN));
 
-    GfycatResponse response = GfycatResponse.create(GFYCAT_RESPONSE);
-    when(dankApi.gfycat_with_auth(DankApi.GFYCAT_API_DOMAIN, AUTH_TOKEN, UNRESOLVED_ID)).thenReturn(Single.just(response));
+    RedgifsResponse response = RedgifsResponse.create(REDGIFS_RESPONSE);
+    when(dankApi.redgifs_with_auth(AUTH_TOKEN, UNRESOLVED_ID)).thenReturn(Single.just(response));
 
-    gfycatRepository.gifGfycat(UNRESOLVED_ID)
+    gfycatRepository.redgifs(UNRESOLVED_ID)
         .test()
         .assertNoErrors()
         .assertComplete()
@@ -87,20 +88,20 @@ public class GfycatRepositoryTest {
     when(data.tokenExpiryTimeMillis()).thenReturn(Single.just(thirtyMinutesBeforeNow));
     when(data.accessToken()).thenReturn(Single.just(AUTH_TOKEN));
 
-    GfycatResponse response = GfycatResponse.create(GFYCAT_RESPONSE);
-    when(dankApi.gfycat_with_auth(DankApi.GFYCAT_API_DOMAIN, AUTH_TOKEN, UNRESOLVED_ID)).thenReturn(Single.just(response));
+    RedgifsResponse response = RedgifsResponse.create(REDGIFS_RESPONSE);
+    when(dankApi.redgifs_with_auth(AUTH_TOKEN, UNRESOLVED_ID)).thenReturn(Single.just(response));
 
     GfycatOauthResponse oAuthResponse = GfycatOauthResponse.create(3600, AUTH_TOKEN);
-    when(dankApi.gfycatOAuth(anyString(), anyString())).thenReturn(Single.just(oAuthResponse));
+    when(dankApi.redgifsOAuth(anyString(), anyString())).thenReturn(Single.just(oAuthResponse));
     when(data.saveOAuthResponse(oAuthResponse)).thenReturn(Completable.complete());
 
-    gfycatRepository.gifGfycat(UNRESOLVED_ID)
+    gfycatRepository.redgifs(UNRESOLVED_ID)
         .test()
         .assertNoErrors()
         .assertComplete()
         .assertValue(GFYCAT_RESOLVED_LINK);
 
-    verify(dankApi).gfycatOAuth(anyString(), anyString());
+    verify(dankApi).redgifsOAuth(anyString(), anyString());
     verify(data).saveOAuthResponse(oAuthResponse);
   }
 
@@ -116,26 +117,26 @@ public class GfycatRepositoryTest {
 
     HttpException forbiddenError = mock(HttpException.class);
     when(forbiddenError.code()).thenReturn(403);
-    when(dankApi.gfycat_no_auth(DankApi.GFYCAT_API_DOMAIN, UNRESOLVED_ID)).thenReturn(Single.error(forbiddenError));
+    when(dankApi.redgifs_no_auth(UNRESOLVED_ID)).thenReturn(Single.error(forbiddenError));
 
     when(data.tokenExpiryTimeMillis()).thenReturn(Single.just(0L));
 
     GfycatOauthResponse oAuthResponse = GfycatOauthResponse.create(3600, AUTH_TOKEN);
-    when(dankApi.gfycatOAuth(anyString(), anyString())).thenReturn(Single.just(oAuthResponse));
+    when(dankApi.redgifsOAuth(anyString(), anyString())).thenReturn(Single.just(oAuthResponse));
     when(data.saveOAuthResponse(oAuthResponse)).thenReturn(Completable.complete());
 
-    GfycatResponse response = GfycatResponse.create(GFYCAT_RESPONSE);
-    when(dankApi.gfycat_with_auth(DankApi.GFYCAT_API_DOMAIN, AUTH_TOKEN, UNRESOLVED_ID)).thenReturn(Single.just(response));
+    RedgifsResponse response = RedgifsResponse.create(REDGIFS_RESPONSE);
+    when(dankApi.redgifs_with_auth(AUTH_TOKEN, UNRESOLVED_ID)).thenReturn(Single.just(response));
     when(data.accessToken()).thenReturn(Single.just(AUTH_TOKEN));
 
-    gfycatRepository.gifGfycat(UNRESOLVED_ID)
+    gfycatRepository.redgifs(UNRESOLVED_ID)
         .test()
         .assertNoErrors()
         .assertComplete()
         .assertValue(GFYCAT_RESOLVED_LINK);
 
     verify(data).setAccessTokenRequired(true);
-    verify(dankApi).gfycatOAuth(anyString(), anyString());
+    verify(dankApi).redgifsOAuth(anyString(), anyString());
     verify(data).saveOAuthResponse(oAuthResponse);
   }
 }
