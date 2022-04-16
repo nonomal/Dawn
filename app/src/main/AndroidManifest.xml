@@ -25,6 +25,7 @@
 
     <activity-alias
       android:name=".Launcher"
+      android:exported="true"
       android:targetActivity=".ui.splash.SplashActivity">
 
       <intent-filter>
@@ -35,20 +36,25 @@
 
     <activity
       android:name=".ui.splash.SplashActivity"
-      android:theme="@style/DankTheme.Splash" />
+      android:theme="@style/DankTheme.Splash"
+      android:exported="true" />
 
     <activity
       android:name=".ui.subreddit.SubredditActivity"
       android:launchMode="singleTask"
       android:theme="@style/DankTheme"
+      android:exported="false"
       android:windowSoftInputMode="adjustResize" />
 
-    <activity android:name=".ui.subreddit.SubredditActivityWithTransparentWindowBackground" />
+    <activity
+      android:name=".ui.subreddit.SubredditActivityWithTransparentWindowBackground" 
+      android:exported="false" />
 
     <activity
       android:name=".ui.authentication.LoginActivity"
       android:label="@string/login"
       android:launchMode="singleTop"
+      android:exported="false"
       android:parentActivityName=".ui.subreddit.SubredditActivity"
       android:theme="@style/DankTheme.DialogLikeActivity"
       android:windowSoftInputMode="adjustResize" />
@@ -57,6 +63,7 @@
 
     <activity
       android:name=".ui.preferences.UserPreferencesActivity"
+      android:exported="false"
       android:label="@string/activity_userpreferences"
       android:parentActivityName=".ui.subreddit.SubredditActivity" />
 
@@ -64,22 +71,26 @@
 
     <activity
       android:name=".ui.webview.ChromeCustomTabsForwardingActivity"
+      android:exported="false"
       android:theme="@android:style/Theme.NoDisplay" />
 
     <activity android:name=".ui.submission.SubmissionPageLayoutActivity" />
 
     <activity
       android:name=".ui.user.messages.InboxActivity"
+      android:exported="false"
       android:launchMode="singleTask"
       android:parentActivityName=".ui.subreddit.SubredditActivity" />
 
     <activity
       android:name=".ui.preferences.HiddenPreferencesActivity"
+      android:exported="false"
       android:label="Hidden Preferences"
       android:parentActivityName=".ui.preferences.UserPreferencesActivity" />
 
     <activity
       android:name=".ui.user.messages.PrivateMessageThreadActivity"
+      android:exported="false"
       android:parentActivityName=".ui.user.messages.InboxActivity"
       android:windowSoftInputMode="adjustResize|stateHidden" />
 
@@ -95,6 +106,7 @@
 
     <activity
       android:name=".ui.PlaygroundActivity"
+      android:exported="false"
       android:label="Playground"
       android:parentActivityName=".ui.subreddit.SubredditActivity" />
 
@@ -105,20 +117,24 @@
 
     <activity
       android:name=".ui.submission.ArchivedSubmissionDialogActivity"
+      android:exported="false"
       android:theme="@style/DankTheme.DialogLikeActivity" />
 
     <activity
       android:name=".ui.submission.LockedSubmissionDialogActivity"
+      android:exported="false"
       android:theme="@style/DankTheme.DialogLikeActivity" />
 
     <activity
       android:name=".ui.appshortcuts.ConfigureAppShortcutsActivity"
+      android:exported="false"
       android:launchMode="singleTask"
       android:theme="@style/DankTheme.DialogLikeActivity"
       android:windowSoftInputMode="adjustNothing" />
 
     <activity
       android:name=".ui.accountmanager.AccountManagerActivity"
+      android:exported="false"
       android:launchMode="singleTask"
       android:theme="@style/DankTheme.DialogLikeActivity"
       android:windowSoftInputMode="adjustNothing" />
@@ -126,6 +142,7 @@
 
     <activity
       android:name=".deeplinks.DeepLinkHandlingActivity"
+      android:exported="false"
       android:theme="@android:style/Theme.NoDisplay">
 
       <intent-filter>
