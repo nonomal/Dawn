@@ -142,7 +142,7 @@
 
     <activity
       android:name=".deeplinks.DeepLinkHandlingActivity"
-      android:exported="false"
+      android:exported="true"
       android:theme="@android:style/Theme.NoDisplay">
 
       <intent-filter>
