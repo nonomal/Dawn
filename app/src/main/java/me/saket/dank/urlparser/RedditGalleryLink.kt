@@ -2,7 +2,7 @@ package me.saket.dank.urlparser
 
 import android.os.Parcelable
 import com.squareup.moshi.JsonClass
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import me.saket.dank.utils.ImageWithMultipleVariants
 import me.saket.dank.utils.Optional
 import net.dean.jraw.models.Submission

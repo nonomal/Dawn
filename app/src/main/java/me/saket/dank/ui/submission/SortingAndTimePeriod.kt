@@ -3,7 +3,7 @@ package me.saket.dank.ui.submission
 import android.os.Parcelable
 import androidx.annotation.StringRes
 import com.squareup.moshi.JsonClass
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import me.saket.dank.R
 import net.dean.jraw.models.SubredditSort
 import net.dean.jraw.models.SubredditSort.*

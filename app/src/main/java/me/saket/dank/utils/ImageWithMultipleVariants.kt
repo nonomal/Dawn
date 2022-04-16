@@ -2,7 +2,7 @@ package me.saket.dank.utils
 
 import android.os.Parcelable
 import android.text.Html
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import me.saket.dank.urlparser.UrlParser
 import net.dean.jraw.models.MediaMetadataItem
 import net.dean.jraw.models.MediaMetadataPreview

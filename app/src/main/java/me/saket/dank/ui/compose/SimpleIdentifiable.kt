@@ -2,7 +2,7 @@ package me.saket.dank.ui.compose
 
 import android.os.Parcelable
 import com.squareup.moshi.JsonClass
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import net.dean.jraw.models.Identifiable
 
 @Parcelize
