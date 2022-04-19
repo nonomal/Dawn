@@ -94,7 +94,7 @@ public abstract class DankJobService extends JobService {
     }
 
     Intent homeActivityIntent = new Intent(this, SubredditActivity.class);
-    PendingIntent onClickPendingIntent = PendingIntent.getActivity(this, 0, homeActivityIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+    PendingIntent onClickPendingIntent = PendingIntent.getActivity(this, 0, homeActivityIntent, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
     NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getString(R.string.notification_channel_debug_notifs_id))
         .setContentTitle(String.format(notifBody, args))

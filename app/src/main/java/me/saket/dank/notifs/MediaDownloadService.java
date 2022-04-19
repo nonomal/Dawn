@@ -293,7 +293,7 @@ public class MediaDownloadService extends Service {
         PendingIntent.getService(this,
             createPendingIntentRequestId(REQUESTCODE_CANCEL_DOWNLOAD_PREFIX_, notificationId),
             cancelDownloadIntent(this, mediaDownloadJob.mediaLink()),
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         )
     );
 
@@ -334,7 +334,7 @@ public class MediaDownloadService extends Service {
     PendingIntent retryPendingIntent = PendingIntent.getBroadcast(this,
         createPendingIntentRequestId(REQUESTCODE_RETRY_DOWNLOAD_PREFIX_, notificationId),
         retryIntent,
-        PendingIntent.FLAG_UPDATE_CURRENT
+        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
     );
 
     Notification errorNotification = new NotificationCompat.Builder(this, getString(R.string.notification_channel_media_downloads_id))
@@ -382,14 +382,14 @@ public class MediaDownloadService extends Service {
     PendingIntent viewImagePendingIntent = PendingIntent.getActivity(this,
         createPendingIntentRequestId(REQUESTCODE_OPEN_IMAGE_PREFIX_, notificationId),
         Intents.createForViewingMedia(this, mediaContentUri, completedDownloadJob.mediaLink().isVideo()),
-        PendingIntent.FLAG_CANCEL_CURRENT
+        PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE
     );
 
     // Share action.
     PendingIntent shareImagePendingIntent = PendingIntent.getBroadcast(this,
         createPendingIntentRequestId(REQUESTCODE_SHARE_IMAGE_PREFIX_, notificationId),
         MediaNotifActionReceiver.createShareImageIntent(this, completedDownloadJob),
-        PendingIntent.FLAG_CANCEL_CURRENT
+        PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE
     );
     NotificationCompat.Action shareImageAction = new NotificationCompat.Action(
         R.drawable.ic_share_20dp,
@@ -401,7 +401,7 @@ public class MediaDownloadService extends Service {
     PendingIntent deleteImagePendingIntent = PendingIntent.getBroadcast(this,
         createPendingIntentRequestId(REQUESTCODE_DELETE_IMAGE_PREFIX_, notificationId),
         MediaNotifActionReceiver.createDeleteImageIntent(this, completedDownloadJob),
-        PendingIntent.FLAG_CANCEL_CURRENT
+        PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE
     );
     NotificationCompat.Action deleteImageAction = new NotificationCompat.Action(
         R.drawable.ic_delete_20dp,

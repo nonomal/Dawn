@@ -217,7 +217,7 @@ public class MessagesNotificationManager {
         context,
         P_INTENT_REQ_ID_OPEN_INBOX,
         MessageNotifActionReceiver.createMarkSeenAndOpenInboxIntent(context, unreadMessages),
-        PendingIntent.FLAG_UPDATE_CURRENT
+        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
     );
 
     Notification summaryNotification = summaryNotifBuilder
@@ -250,7 +250,7 @@ public class MessagesNotificationManager {
             context,
             (int) System.nanoTime(),
             directReplyIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
         Action replyAction = new Action.Builder(0, context.getString(R.string.messagenotification_reply), directReplyPendingIntent)
             .addRemoteInput(new RemoteInput.Builder(MessageNotifActionReceiver.KEY_DIRECT_REPLY_MESSAGE)
@@ -372,7 +372,7 @@ public class MessagesNotificationManager {
         context,
         P_INTENT_REQ_ID_SUMMARY_MARK_ALL_AS_SEEN,
         markAllAsSeenIntent,
-        PendingIntent.FLAG_UPDATE_CURRENT
+        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
     );
 
     // Mark all as read action. Will only show up on < Nougat.
@@ -381,7 +381,7 @@ public class MessagesNotificationManager {
         context,
         P_INTENT_REQ_ID_SUMMARY_MARK_ALL_AS_READ,
         markAllAsReadIntent,
-        PendingIntent.FLAG_UPDATE_CURRENT
+        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
     );
     Action markAllReadAction = new Action.Builder(R.drawable.ic_done_all_24dp, context.getString(R.string.messagenotification_mark_all_as_read), markAllAsReadPendingIntent).build();
 
@@ -412,12 +412,12 @@ public class MessagesNotificationManager {
 
   private PendingIntent createMarkAsReadPendingIntent(Context context, Message unreadMessage, int requestId) {
     Intent markAsReadIntent = MessageNotifActionReceiver.createMarkAsReadIntent(context, moshiAdapter.get(), unreadMessage);
-    return PendingIntent.getBroadcast(context, requestId, markAsReadIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+    return PendingIntent.getBroadcast(context, requestId, markAsReadIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
   }
 
   private PendingIntent createMarkAsSeenPendingIntent(Context context, Message unreadMessage, int requestId) {
     Intent markAsSeenIntent = MessageNotifActionReceiver.createMarkAsSeenIntent(context, unreadMessage);
-    return PendingIntent.getBroadcast(context, requestId, markAsSeenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+    return PendingIntent.getBroadcast(context, requestId, markAsSeenIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
   }
 
   /**
