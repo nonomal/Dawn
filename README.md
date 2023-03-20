@@ -2,9 +2,6 @@
     <img alt='Dawn' src='https://saket.me/wp-content/uploads/2018/04/dank_cover.jpg'/>
 </p>
 <p align='center'>
-    <a href='https://play.google.com/store/apps/details?id=me.thanel.dank&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
-        <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height="75"/>
-    </a>
     <a href='https://f-droid.org/en/packages/me.thanel.dank'>
         <img alt='Get it on F-Droid' src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="75"/>
     </a>
@@ -24,7 +21,13 @@
     </a>
 </p>
 
-### Here lives the greatest open-source Reddit app
+# THIS PROJECT IS NO LONGER MAINTAINED
+
+This fork similar to original repository is no longer being maintained. For details see [issue #642](https://github.com/Tunous/Dawn/issues/642).
+
+---
+
+### Here lies the for of the greatest open-source Reddit app
 
 This is a fork of a Reddit application named **Dank** created by [@saket](https://github.com/saket). You can find the original repository [here](https://github.com/saket/Dank) and read about why the original code has been archived and open sourced in [this blog post](https://saket.me/sunsetting-dank/).
 
