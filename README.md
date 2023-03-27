@@ -27,7 +27,7 @@ This fork similar to original repository is no longer being maintained. For deta
 
 ---
 
-### Here lies the for of the greatest open-source Reddit app
+### Here lies the fork of the greatest open-source Reddit app
 
 This is a fork of a Reddit application named **Dank** created by [@saket](https://github.com/saket). You can find the original repository [here](https://github.com/saket/Dank) and read about why the original code has been archived and open sourced in [this blog post](https://saket.me/sunsetting-dank/).
 
